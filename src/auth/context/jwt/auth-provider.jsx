@@ -3,8 +3,8 @@ import { useMemo, useEffect, useReducer, useCallback } from 'react';
 
 import axios, { endpoints } from 'src/utils/axios';
 
+import { setSession } from './utils';
 import { AuthContext } from './auth-context';
-import { setSession, isValidToken } from './utils';
 
 // ----------------------------------------------------------------------
 /**
@@ -49,17 +49,19 @@ const reducer = (state, action) => {
 
 // ----------------------------------------------------------------------
 
-const STORAGE_KEY = 'accessToken';
+const JWT = 'jwt';
+const JWT_REFRESH = 'jwtRefresh';
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const jwt = sessionStorage.getItem(JWT);
+      const jwtRefresh = sessionStorage.getItem(JWT_REFRESH);
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
+      if (jwt && jwtRefresh) {
+        setSession(jwt, jwtRefresh);
 
         const response = await axios.get(endpoints.auth.me);
 
@@ -70,7 +72,8 @@ export function AuthProvider({ children }) {
           payload: {
             user: {
               ...user,
-              accessToken,
+              jwt,
+              jwtRefresh,
             },
           },
         });
@@ -106,46 +109,47 @@ export function AuthProvider({ children }) {
 
     const response = await axios.post(endpoints.auth.login, data);
 
-    const { accessToken, user } = response.data;
+    const { tokens, user } = response.data.data;
+    const { jwt, jwtRefresh } = tokens;
 
-    setSession(accessToken);
+    setSession(jwt, jwtRefresh);
 
     dispatch({
       type: 'LOGIN',
       payload: {
         user: {
           ...user,
-          accessToken,
+          jwt,jwtRefresh
         },
       },
     });
   }, []);
 
   // REGISTER
-  const register = useCallback(async (email, password, firstName, lastName) => {
-    const data = {
-      email,
-      password,
-      firstName,
-      lastName,
-    };
-
-    const response = await axios.post(endpoints.auth.register, data);
-
-    const { accessToken, user } = response.data;
-
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
-
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user: {
-          ...user,
-          accessToken,
-        },
-      },
-    });
-  }, []);
+  // const register = useCallback(async (email, password, firstName, lastName) => {
+  //   const data = {
+  //     email,
+  //     password,
+  //     firstName,
+  //     lastName,
+  //   };
+  //
+  //   const response = await axios.post(endpoints.auth.register, data);
+  //
+  //   const { accessToken, user } = response.data;
+  //
+  //   sessionStorage.setItem(STORAGE_KEY, accessToken);
+  //
+  //   dispatch({
+  //     type: 'REGISTER',
+  //     payload: {
+  //       user: {
+  //         ...user,
+  //         accessToken,
+  //       },
+  //     },
+  //   });
+  // }, []);
 
   // LOGOUT
   const logout = useCallback(async () => {
@@ -170,10 +174,9 @@ export function AuthProvider({ children }) {
       unauthenticated: status === 'unauthenticated',
       //
       login,
-      register,
       logout,
     }),
-    [login, logout, register, state.user, status]
+    [login, logout, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
