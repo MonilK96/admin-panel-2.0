@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
         const url = `${AUTH_API}/api/users/me`;
         const response = await axios.get(url);
 
-        const { user } = response.data;
+        const user  = response.data;
 
         dispatch({
           type: 'INITIAL',
