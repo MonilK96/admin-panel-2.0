@@ -5,6 +5,7 @@ import axios, { endpoints } from 'src/utils/axios';
 
 import { setSession } from './utils';
 import { AuthContext } from './auth-context';
+import { AUTH_API } from '../../../config-global';
 
 // ----------------------------------------------------------------------
 /**
@@ -62,8 +63,8 @@ export function AuthProvider({ children }) {
 
       if (jwt && jwtRefresh) {
         setSession(jwt, jwtRefresh);
-
-        const response = await axios.get(endpoints.auth.me);
+        const url = `${AUTH_API}/api/users/me`;
+        const response = await axios.get(url);
 
         const { user } = response.data;
 
@@ -107,7 +108,8 @@ export function AuthProvider({ children }) {
       password,
     };
 
-    const response = await axios.post(endpoints.auth.login, data);
+    const URL = `${AUTH_API}/api/auth/v2/login`;
+    const response = await axios.post(URL, data);
 
     const { user } = response.data.data;
     const { jwt, jwtRefresh } = user.other_info;

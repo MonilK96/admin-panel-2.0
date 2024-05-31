@@ -42,8 +42,6 @@ import {
 import EmployeeTableRow from '../employee-table-row';
 import EmployeeTableToolbar from '../employee-table-toolbar';
 import EmployeeTableFiltersResult from '../employee-table-filters-result';
-import { useDebounce } from '../../../hooks/use-debounce';
-import { useGetPosts } from '../../../api/blog';
 import { useGetEmployees } from '../../../api/employee';
 
 // ----------------------------------------------------------------------
@@ -281,12 +279,12 @@ export default function EmployeeListView() {
                     )
                     .map((row) => (
                       <EmployeeTableRow
-                        key={row.id}
+                        key={row._id}
                         row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
+                        selected={table.selected.includes(row._id)}
+                        onSelectRow={() => table.onSelectRow(row._id)}
+                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onEditRow={() => handleEditRow(row._id)}
                       />
                     ))}
 
