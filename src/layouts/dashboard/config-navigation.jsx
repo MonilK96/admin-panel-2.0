@@ -87,6 +87,11 @@ export function useNavData() {
             path: paths.dashboard.general.file,
             icon: ICONS.file,
           },
+          {
+            title: t('fees'),
+            path: paths.dashboard.general.fees,
+            icon: ICONS.invoice,
+          },
         ],
       },
 
