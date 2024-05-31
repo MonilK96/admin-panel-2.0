@@ -109,8 +109,8 @@ export function AuthProvider({ children }) {
 
     const response = await axios.post(endpoints.auth.login, data);
 
-    const { tokens, user } = response.data.data;
-    const { jwt, jwtRefresh } = tokens;
+    const { user } = response.data.data;
+    const { jwt, jwtRefresh } = user.other_info;
 
     setSession(jwt, jwtRefresh);
 

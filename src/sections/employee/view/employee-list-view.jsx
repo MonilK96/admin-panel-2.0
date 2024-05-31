@@ -52,10 +52,10 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
+  { id: 'contact', label: 'Phone Number', width: 180 },
+  { id: 'technology', label: 'Technology', width: 220 },
   { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'joining_date', label: 'Joining Date', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -78,14 +78,14 @@ export default function EmployeeListView() {
 
   const confirm = useBoolean();
 
-  const { employees } = useGetEmployees();
+  const { employees, employeesLoading, employeesError, employeesEmpty } = useGetEmployees();
 
   const [tableData, setTableData] = useState(employees);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: employees,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -144,7 +144,7 @@ export default function EmployeeListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.user.edit(id));
+      router.push(paths.dashboard.employee.edit(id));
     },
     [router]
   );
@@ -163,13 +163,13 @@ export default function EmployeeListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
+            { name: 'Employee', href: paths.dashboard.employee.root },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.user.new}
+              href={paths.dashboard.employee.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
