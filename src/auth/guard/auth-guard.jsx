@@ -23,7 +23,8 @@ const loginPaths = {
 export default function AuthGuard({ children }) {
   const { loading } = useAuthContext();
 
-  return <>{loading ? <SplashScreen /> : <Container> {children}</Container>}</>;
+  // return <>{loading ? <SplashScreen /> : <Container> {children}</Container>}</>;
+  return <>{children}</>
 }
 
 AuthGuard.propTypes = {

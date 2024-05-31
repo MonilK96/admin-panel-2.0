@@ -35,6 +35,12 @@ const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
 const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
+// STUDENT
+const StudentProfilePage = lazy(() => import('src/pages/dashboard/student/profile'));
+const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
+const StudentAccountPage = lazy(() => import('src/pages/dashboard/student/account'));
+const StudentCreatePage = lazy(() => import('src/pages/dashboard/student/new'));
+const StudentEditPage = lazy(() => import('src/pages/dashboard/student/edit'));
 // EMPLOYEE
 const EmployeeProfilePage = lazy(() => import('src/pages/dashboard/employee/profile'));
 const EmployeeCardsPage = lazy(() => import('src/pages/dashboard/employee/cards'));
@@ -101,7 +107,19 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <UserEditPage /> },
           { path: 'account', element: <UserAccountPage /> },
         ],
-      },{
+      },
+      {
+        path: 'student',
+        children: [
+          { element: <StudentProfilePage />, index: true },
+          { path: 'profile', element: <StudentProfilePage /> },
+          { path: 'list', element: <StudentListPage /> },
+          { path: 'new', element: <StudentCreatePage /> },
+          { path: ':id/edit', element: <StudentEditPage /> },
+          { path: 'account', element: <StudentAccountPage /> },
+        ],
+      },
+      {
         path: 'employee',
         children: [
           { element: <EmployeeProfilePage />, index: true },
