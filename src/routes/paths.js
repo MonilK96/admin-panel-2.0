@@ -175,6 +175,20 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
       },
     },
+    demo: {
+      root: `${ROOTS.DASHBOARD}/demo`,
+      // details: (id) => `${ROOTS.DASHBOARD}/demo/${id}`,
+      // demo: {
+      //   details: `${ROOTS.DASHBOARD}/demo/${MOCK_ID}`,
+      // },
+    },
+    attendance: {
+      root: `${ROOTS.DASHBOARD}/attendance`,
+      // details: (id) => `${ROOTS.DASHBOARD}/attendance/${id}`,
+      // demo: {
+      // details: `${ROOTS.DASHBOARD}/attendance/${MOCK_ID}`,
+      // },
+    },
     job: {
       root: `${ROOTS.DASHBOARD}/job`,
       new: `${ROOTS.DASHBOARD}/job/new`,

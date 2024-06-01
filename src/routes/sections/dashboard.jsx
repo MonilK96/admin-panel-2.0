@@ -23,6 +23,10 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 // ORDER
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
+// DEMO
+const DemoListPage = lazy(() => import('src/pages/dashboard/demo/list'));
+// ATTENDANCE
+const AttendanceListPage = lazy(() => import('src/pages/dashboard/attendance/list'));
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
@@ -101,7 +105,8 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <UserEditPage /> },
           { path: 'account', element: <UserAccountPage /> },
         ],
-      },{
+      },
+      {
         path: 'employee',
         children: [
           { element: <EmployeeProfilePage />, index: true },
@@ -129,6 +134,22 @@ export const dashboardRoutes = [
           { element: <OrderListPage />, index: true },
           { path: 'list', element: <OrderListPage /> },
           { path: ':id', element: <OrderDetailsPage /> },
+        ],
+      },
+      {
+        path: 'demo',
+        children: [
+          { element: <DemoListPage />, index: true },
+          { path: 'list', element: <DemoListPage /> },
+          // { path: ':id', element: <DemoDetailsPage /> },
+        ],
+      },
+      {
+        path: 'attendance',
+        children: [
+          { element: <AttendanceListPage />, index: true },
+          { path: 'list', element: <AttendanceListPage /> },
+          // { path: ':id', element: <DemoDetailsPage /> },
         ],
       },
       {

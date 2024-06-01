@@ -152,6 +152,28 @@ export function useNavData() {
             ],
           },
 
+          // DEMO
+          {
+            title: t('Demo'),
+            path: paths.dashboard.demo.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.demo.root },
+              // { title: t('details'), path: paths.dashboard.demo.demo.details },
+            ],
+          },
+
+          // ATTENDANCE
+          {
+            title: t('attendance'),
+            path: paths.dashboard.attendance.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.attendance.root },
+              // { title: t('details'), path: paths.dashboard.attendance.demo.details },
+            ],
+          },
+
           // INVOICE
           {
             title: t('invoice'),
