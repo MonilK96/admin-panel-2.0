@@ -10,7 +10,7 @@ import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
-import UserCardList from '../student-card-list';
+import StudentCardList from '../student-card-list';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default function StudentCardsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <UserCardList users={_userCards} />
+      <StudentCardList users={_userCards} />
     </Container>
   );
 }

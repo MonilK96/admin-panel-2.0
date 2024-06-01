@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
-import { UserEditView } from 'src/sections/user/view';
+import { StudentEditView } from 'src/sections/student/view';
 
 // ----------------------------------------------------------------------
 
@@ -14,10 +14,10 @@ export default function UserEditPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: User Edit</title>
+        <title> Dashboard: Student Edit</title>
       </Helmet>
 
-      <UserEditView id={`${id}`} />
+      <StudentEditView id={`${id}`} />
     </>
   );
 }

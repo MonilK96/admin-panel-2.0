@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 
-import UserCard from './student-card';
+import StudentCard from './student-card';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ export default function StudentCardList({ users }) {
       }}
     >
       {users.map((user) => (
-        <UserCard key={user.id} user={user} />
+        <StudentCard key={user.id} user={user} />
       ))}
     </Box>
   );

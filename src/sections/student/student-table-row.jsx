@@ -1,5 +1,5 @@
-import moment from 'moment/moment';
 import PropTypes from 'prop-types';
+import moment from 'moment'
 
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -18,22 +18,19 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
-import UserQuickEditForm from './student-quick-edit-form';
+import StudentQuickEditForm from './student-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
 export default function StudentTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { firstName, lastName, joining_date, email, contact, course, avatar_url } =
-    row.personal_info;
-  const { enrollment_no, status } = row;
-
-  const joiningDate = moment(joining_date).format("DD-MM-YYYY")
+  const { firstName, lastName, profile_pic, course, joining_date,  email, contact } = row.personal_info;
 
   const confirm = useBoolean();
 
   const quickEdit = useBoolean();
 
   const popover = usePopover();
+
   return (
     <>
       <TableRow hover selected={selected}>
@@ -41,8 +38,9 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
+        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: "center" }}>{row.enrollment_no}</TableCell>
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={avatar_url} src={avatar_url} sx={{ mr: 2 }} />
+          <Avatar alt={`${firstName} ${lastName}`} src={profile_pic} sx={{ mr: 2 }} />
 
           <ListItemText
             primary={`${firstName} ${lastName}`}
@@ -54,25 +52,24 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
             }}
           />
         </TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{enrollment_no}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{contact}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{course}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{joiningDate}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(joining_date).format("DD/MM/YYYY")}</TableCell>
 
         <TableCell>
           <Label
             variant="soft"
             color={
-              (status === 'Completed' && 'success') ||
-              (status === 'Running' && 'warning') ||
-              (status === 'Leaved' && 'error') ||
+              (row.status === 'Completed' && 'success') ||
+              (row.status === 'Running' && 'warning') ||
+              (row.status === 'Leaved' && 'error') ||
               'default'
             }
           >
-            {status}
+            {row.status}
           </Label>
         </TableCell>
 
@@ -89,7 +86,7 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
         </TableCell>
       </TableRow>
 
-      <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
+      <StudentQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
 
       <CustomPopover
         open={popover.open}
@@ -97,15 +94,6 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
         arrow="right-top"
         sx={{ width: 140 }}
       >
-         <MenuItem
-          onClick={() => {
-            // onViewRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          View
-        </MenuItem>
         <MenuItem
           onClick={() => {
             confirm.onTrue();

@@ -23,7 +23,7 @@ export default function EmployeeCreateView() {
           },
           {
             name: 'Employee',
-            href: paths.dashboard.employee.root,
+            href: paths.dashboard.employee.list,
           },
           { name: 'New Employee' },
         ]}

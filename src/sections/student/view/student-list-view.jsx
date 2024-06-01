@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -42,20 +42,20 @@ import {
 import StudentTableRow from '../student-table-row';
 import StudentTableToolbar from '../student-table-toolbar';
 import StudentTableFiltersResult from '../student-table-filters-result';
-import { useGetAllStudents } from 'src/api/student';
+import { useGetStudents } from '../../../api/student';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
+  { id: 'enrollment_no', label: 'Enroll No', width: 180 },
   { id: 'name', label: 'Name' },
-  { id: 'Enrollment no', label: 'Enroll No', width: 190 },
-  { id: 'phoneNumber', label: 'Phone Number', width: 260 },
-  { id: 'company', label: 'Course', width: 320 },
-  { id: 'role', label: 'Joining Date', width: 200 },
+  { id: 'contact', label: 'Phone Number', width: 180 },
+  { id: 'course', label: 'Course', width: 220 },
+  { id: 'joining_date', label: 'Joining date', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
-  { id: '', width: 100 },
+  { id: '', width: 88 },
 ];
 
 const defaultFilters = {
@@ -68,25 +68,23 @@ const defaultFilters = {
 
 export default function StudentListView() {
   const { enqueueSnackbar } = useSnackbar();
+
   const table = useTable();
+
   const settings = useSettingsContext();
+
   const router = useRouter();
+
   const confirm = useBoolean();
 
+  const {students} = useGetStudents();
 
-  const { students } = useGetAllStudents();
+  const [tableData, setTableData] = useState(students);
 
-  const [tableData, setTableData] = useState([]);
   const [filters, setFilters] = useState(defaultFilters);
 
-  useEffect(() => {
-    if (students.length > 0) {
-      setTableData(students);
-    }
-  }, [students]);
-
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: students,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -96,8 +94,10 @@ export default function StudentListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   );
 
-  const denseHeight = table.dense ? 56 : 76;
+  const denseHeight = table.dense ? 56 : 56 + 20;
+
   const canReset = !isEqual(defaultFilters, filters);
+
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
@@ -118,8 +118,11 @@ export default function StudentListView() {
   const handleDeleteRow = useCallback(
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
+
       enqueueSnackbar('Delete success!');
+
       setTableData(deleteRow);
+
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
@@ -127,8 +130,11 @@ export default function StudentListView() {
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+
     enqueueSnackbar('Delete success!');
+
     setTableData(deleteRows);
+
     table.onUpdatePageDeleteRows({
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
@@ -137,7 +143,7 @@ export default function StudentListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.user.edit(id));
+      router.push(paths.dashboard.student.edit(id));
     },
     [router]
   );
@@ -151,7 +157,7 @@ export default function StudentListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
@@ -166,7 +172,7 @@ export default function StudentListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New User
+              New Student
             </Button>
           }
           sx={{
@@ -201,7 +207,7 @@ export default function StudentListView() {
                       'default'
                     }
                   >
-                    {['Completed', 'Running', 'Leaved'].includes(tab.value)
+                    {['Running', 'Leaved', 'Completed'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
                   </Label>
@@ -210,13 +216,20 @@ export default function StudentListView() {
             ))}
           </Tabs>
 
-          <StudentTableToolbar filters={filters} onFilters={handleFilters} roleOptions={_roles} />
+          <StudentTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            //
+            roleOptions={_roles}
+          />
 
           {canReset && (
             <StudentTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
+              //
               onResetFilters={handleResetFilters}
+              //
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -230,7 +243,7 @@ export default function StudentListView() {
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  dataFiltered.map((row) => row._id)
                 )
               }
               action={
@@ -254,7 +267,7 @@ export default function StudentListView() {
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      dataFiltered.map((row) => row.id)
+                      dataFiltered.map((row) => row._id)
                     )
                   }
                 />
@@ -267,12 +280,12 @@ export default function StudentListView() {
                     )
                     .map((row) => (
                       <StudentTableRow
-                        key={row.id}
+                        key={row._id}
                         row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
+                        selected={table.selected.includes(row._id)}
+                        onSelectRow={() => table.onSelectRow(row._id)}
+                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onEditRow={() => handleEditRow(row._id)}
                       />
                     ))}
 
@@ -293,6 +306,7 @@ export default function StudentListView() {
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
+            //
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
@@ -325,6 +339,8 @@ export default function StudentListView() {
   );
 }
 
+// ----------------------------------------------------------------------
+
 function applyFilter({ inputData, comparator, filters }) {
   const { name, status, role } = filters;
 
@@ -340,7 +356,7 @@ function applyFilter({ inputData, comparator, filters }) {
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.personal_info.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
