@@ -4,12 +4,6 @@ import { _mock } from './_mock';
 
 // ----------------------------------------------------------------------
 
-export const USER_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'banned', label: 'Banned' },
-  { value: 'rejected', label: 'Rejected' },
-];
 
 export const _userAbout = {
   id: _mock.id(1),
@@ -136,6 +130,11 @@ export const _userPlans = [
     price: 9.99,
     primary: false,
   },
+];
+export const USER_STATUS_OPTIONS = [
+  { value: 'Completed', label: 'Completed' },
+  { value: 'Running', label: 'Running' },
+  { value: 'Leaved', label: 'Leaved' },
 ];
 
 export const _userList = [...Array(20)].map((_, index) => ({

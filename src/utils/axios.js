@@ -29,11 +29,11 @@ export const endpoints = {
   chat: '/api/chat',
   kanban: '/api/kanban',
   calendar: '/api/calendar',
-  auth: {
-    me: '/api/auth/me',
-    login: '/api/auth/login',
-    register: '/api/auth/register',
-  },
+  // auth: {
+  //   me: '/api/users/me',
+  //   login: '/api/auth/v2/login',
+  //   register: '/api/auth/register',
+  // },
   mail: {
     list: '/api/mail/list',
     details: '/api/mail/details',

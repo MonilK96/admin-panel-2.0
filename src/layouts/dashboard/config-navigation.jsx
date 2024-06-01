@@ -111,6 +111,26 @@ export function useNavData() {
               { title: t('account'), path: paths.dashboard.user.account },
             ],
           },
+          // STUDENT
+          {
+            title: t('student'),
+            path: paths.dashboard.student.root,
+            icon: ICONS.user,
+            children: [
+              { title: t('profile'), path: paths.dashboard.student.root },
+              { title: t('list'), path: paths.dashboard.student.list },
+              { title: t('create'), path: paths.dashboard.student.new },
+              { title: t('edit'), path: paths.dashboard.student.demo.edit },
+              { title: t('account'), path: paths.dashboard.student.account },
+            ],
+          },
+
+          // EMPLOYEE
+          {
+            title: t('employee'),
+            path: paths.dashboard.employee.list,
+            icon: ICONS.user,
+          },
 
           {
             title: t('inquiry'),

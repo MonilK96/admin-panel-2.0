@@ -25,7 +25,7 @@ export default function AuthGuard({ children }) {
   const { loading } = useAuthContext();
 
   // return <>{loading ? <SplashScreen /> : <Container> {children}</Container>}</>;
-  return <>{children}</>;
+  return <>{children}</>
 }
 
 AuthGuard.propTypes = {

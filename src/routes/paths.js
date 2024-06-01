@@ -132,6 +132,29 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/inquiry/list`,
       edit: `${ROOTS.DASHBOARD}/inquiry/edit`,
     },
+    student: {
+      root: `${ROOTS.DASHBOARD}/student`,
+      new: `${ROOTS.DASHBOARD}/student/new`,
+      list: `${ROOTS.DASHBOARD}/student/list`,
+      profile: `${ROOTS.DASHBOARD}/student/profile`,
+      account: `${ROOTS.DASHBOARD}/student/account`,
+      edit: (id) => `${ROOTS.DASHBOARD}/student/${id}/edit`,
+      demo: {
+        edit: `${ROOTS.DASHBOARD}/student/${MOCK_ID}/edit`,
+      },
+    },
+    employee: {
+      root: `${ROOTS.DASHBOARD}/employee`,
+      new: `${ROOTS.DASHBOARD}/employee/new`,
+      list: `${ROOTS.DASHBOARD}/employee/list`,
+      cards: `${ROOTS.DASHBOARD}/employee/cards`,
+      profile: `${ROOTS.DASHBOARD}/employee/profile`,
+      account: `${ROOTS.DASHBOARD}/employee/account`,
+      edit: (id) => `${ROOTS.DASHBOARD}/employee/${id}/edit`,
+      demo: {
+        edit: `${ROOTS.DASHBOARD}/employee/${MOCK_ID}/edit`,
+      },
+    },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
