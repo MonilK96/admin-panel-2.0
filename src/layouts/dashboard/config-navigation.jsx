@@ -36,6 +36,7 @@ const ICONS = {
   booking: icon('ic_booking'),
   invoice: icon('ic_invoice'),
   product: icon('ic_product'),
+  inquiry: icon('ic_label'),
   calendar: icon('ic_calendar'),
   disabled: icon('ic_disabled'),
   external: icon('ic_external'),
@@ -87,6 +88,7 @@ export function useNavData() {
             path: paths.dashboard.general.file,
             icon: ICONS.file,
           },
+          
         ],
       },
 
@@ -109,6 +111,19 @@ export function useNavData() {
               { title: t('account'), path: paths.dashboard.user.account },
             ],
           },
+
+          {
+            title: t('inquiry'),
+            path: paths.dashboard.inquiry.root,
+            icon: ICONS.inquiry,
+            children: [
+              { title: t('list'), path: paths.dashboard.inquiry.root },
+              { title: t('create'), path: paths.dashboard.inquiry.new },
+              { title: t('edit'), path: paths.dashboard.inquiry.edit },
+            ],
+          },
+          
+          
 
           // PRODUCT
           {

@@ -6,6 +6,8 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
+
+
 // ----------------------------------------------------------------------
 
 // OVERVIEW
@@ -15,6 +17,12 @@ const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics')
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
+
+// Inquiry
+const InquiryListPage = lazy(() => import('src/pages/dashboard/inquiry/list'));
+const InquiryCreatePage = lazy(() => import('src/pages/dashboard/inquiry/new'));
+const InquiryEditPage = lazy(() => import('src/pages/dashboard/inquiry/edit'));
+
 // PRODUCT
 const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/details'));
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
@@ -93,6 +101,15 @@ export const dashboardRoutes = [
           { path: 'new', element: <UserCreatePage /> },
           { path: ':id/edit', element: <UserEditPage /> },
           { path: 'account', element: <UserAccountPage /> },
+        ],
+      },
+      {
+        path: 'inquiry',
+        children: [
+          { element: <InquiryListPage />, index: true },
+          { path: 'list', element: <InquiryListPage /> },
+          { path: 'new', element: <InquiryCreatePage /> },
+          { path: 'edit', element: <InquiryEditPage /> },
         ],
       },
       {
