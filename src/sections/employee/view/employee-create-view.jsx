@@ -15,17 +15,17 @@ export default function EmployeeCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Create a new employee"
         links={[
           {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
           {
-            name: 'User',
-            href: paths.dashboard.user.root,
+            name: 'Employee',
+            href: paths.dashboard.employee.root,
           },
-          { name: 'New user' },
+          { name: 'New Employee' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

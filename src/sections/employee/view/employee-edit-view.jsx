@@ -28,8 +28,8 @@ export default function EmployeeEditView({ id }) {
             href: paths.dashboard.root,
           },
           {
-            name: 'User',
-            href: paths.dashboard.user.root,
+            name: 'Employee',
+            href: paths.dashboard.employee.root,
           },
           { name: currentUser?.name },
         ]}
