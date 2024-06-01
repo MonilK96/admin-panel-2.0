@@ -1,15 +1,10 @@
+import axios from 'axios';
 import { countries } from 'src/assets/data';
 
 import { _mock } from './_mock';
 
 // ----------------------------------------------------------------------
 
-export const USER_STATUS_OPTIONS = [
-  { value: 'active', label: 'Active' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'banned', label: 'Banned' },
-  { value: 'rejected', label: 'Rejected' },
-];
 
 export const _userAbout = {
   id: _mock.id(1),
@@ -137,21 +132,13 @@ export const _userPlans = [
     primary: false,
   },
 ];
+export const USER_STATUS_OPTIONS = [
+  { value: 'Completed', label: 'Completed' },
+  { value: 'Running', label: 'Running' },
+  { value: 'Leaved', label: 'Leaved' },
+];
 
-export const _userList = [...Array(20)].map((_, index) => ({
-  id: _mock.id(index),
-  zipCode: '85807',
-  state: 'Virginia',
-  city: 'Rancho Cordova',
-  role: _mock.role(index),
-  email: _mock.email(index),
-  address: '908 Jack Locks',
-  name: _mock.fullName(index),
-  isVerified: _mock.boolean(index),
-  company: _mock.companyName(index),
-  country: countries[index + 1].label,
-  avatarUrl: _mock.image.avatar(index),
-  phoneNumber: _mock.phoneNumber(index),
-  status:
-    (index % 2 && 'pending') || (index % 3 && 'banned') || (index % 4 && 'rejected') || 'active',
-}));
+export const _userList = await axios.get(
+  'https://admin-panel-dmawv.ondigitalocean.app/api/company//664ec7b3671bf9a7f5366599/student?page=1&limit=10'
+).then((res) => res).catch((err) => err);
+
