@@ -21,14 +21,13 @@ import { SettingsDrawer, SettingsProvider } from 'src/components/settings';
 
 import { CheckoutProvider } from 'src/sections/checkout/context';
 import { AuthProvider } from './auth/context/jwt';
-import { RecoilRoot } from 'recoil';
 
 export default function App() {
   useScrollToTop();
 
   return (
+      
     <AuthProvider>
-      <RecoilRoot>
         <LocalizationProvider>
           <SettingsProvider
             defaultSettings={{
@@ -53,7 +52,6 @@ export default function App() {
             </ThemeProvider>
           </SettingsProvider>
         </LocalizationProvider>
-      </RecoilRoot>
     </AuthProvider>
   );
 }

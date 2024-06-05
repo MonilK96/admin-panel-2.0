@@ -21,7 +21,8 @@ import { createEvent, updateEvent, deleteEvent } from 'src/api/calendar';
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import { ColorPicker } from 'src/components/color-utils';
-import FormProvider, { RHFSwitch, RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFAutocomplete, RHFSelect, RHFSwitch, RHFTextField } from 'src/components/hook-form';
+import { MobileDatePicker } from '@mui/x-date-pickers';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +40,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
   });
 
   const methods = useForm({
-    resolver: yupResolver(EventSchema),
+    // resolver: yupResolver(EventSchema),
     defaultValues: currentEvent,
   });
 
@@ -55,7 +56,12 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
 
   const dateError = isAfter(values.start, values.end);
 
+  const eventTypeOptions = ["Festival Holiday","Student Leave","Recaption Leave","Other"];
+
+
   const onSubmit = handleSubmit(async (data) => {
+    console.log("Data : ",{...data,leave_status: "Pending"});
+
     const eventData = {
       id: currentEvent?.id ? currentEvent?.id : uuidv4(),
       color: data?.color,
@@ -66,21 +72,22 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
       start: data?.start,
     };
 
-    try {
-      if (!dateError) {
-        if (currentEvent?.id) {
-          await updateEvent(eventData);
-          enqueueSnackbar('Update success!');
-        } else {
-          await createEvent(eventData);
-          enqueueSnackbar('Create success!');
-        }
-        onClose();
-        reset();
-      }
-    } catch (error) {
-      console.error(error);
-    }
+
+    // try {
+    //   if (!dateError) {
+    //     if (currentEvent?.id) {
+    //       await updateEvent(eventData);
+    //       enqueueSnackbar('Update success!');
+    //     } else {
+    //       await createEvent(eventData);
+    //       enqueueSnackbar('Create success!');
+    //     }
+    //     onClose();
+    //     reset();
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
   });
 
   const onDelete = useCallback(async () => {
@@ -96,17 +103,30 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3} sx={{ px: 3 }}>
-        <RHFTextField name="title" label="Title" />
+        <RHFTextField name="student" label="Student Name" />
 
-        <RHFTextField name="description" label="Description" multiline rows={3} />
+        <RHFAutocomplete
+          name="leave_type"
+          label="Event Type"
+          options={eventTypeOptions}
+          getOptionLabel={(option) => option}
+          isOptionEqualToValue={(option, value) => option === value}
+          renderOption={(props, option) => (
+            <li {...props} key={option}>
+              {option}
+            </li>
+          )}
+        />
 
-        <RHFSwitch name="allDay" label="All day" />
+        <RHFTextField name="event" label="Event" />
+
+
 
         <Controller
-          name="start"
+          name="startDate"
           control={control}
           render={({ field }) => (
-            <MobileDateTimePicker
+            <MobileDatePicker
               {...field}
               value={new Date(field.value)}
               onChange={(newValue) => {
@@ -115,7 +135,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
                 }
               }}
               label="Start date"
-              format="dd/MM/yyyy hh:mm a"
+              format="dd/MM/yyyy"
               slotProps={{
                 textField: {
                   fullWidth: true,
@@ -125,11 +145,12 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
           )}
         />
 
+        
         <Controller
-          name="end"
+          name="endDate"
           control={control}
           render={({ field }) => (
-            <MobileDateTimePicker
+            <MobileDatePicker
               {...field}
               value={new Date(field.value)}
               onChange={(newValue) => {
@@ -138,7 +159,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
                 }
               }}
               label="End date"
-              format="dd/MM/yyyy hh:mm a"
+              format="dd/MM/yyyy"
               slotProps={{
                 textField: {
                   fullWidth: true,
@@ -150,17 +171,8 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
           )}
         />
 
-        <Controller
-          name="color"
-          control={control}
-          render={({ field }) => (
-            <ColorPicker
-              selected={field.value}
-              onSelectColor={(color) => field.onChange(color)}
-              colors={colorOptions}
-            />
-          )}
-        />
+        <RHFTextField name="leave_description" label="Description" multiline rows={3} />
+        
       </Stack>
 
       <DialogActions>

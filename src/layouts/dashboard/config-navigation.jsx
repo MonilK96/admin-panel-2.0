@@ -115,6 +115,21 @@ export function useNavData() {
             ],
           },
 
+          // EMPLOYEE
+          {
+            title: t('employee'),
+            path: paths.dashboard.employee.root,
+            icon: ICONS.user,
+            children: [
+              { title: t('profile'), path: paths.dashboard.employee.root },
+              { title: t('cards'), path: paths.dashboard.employee.cards },
+              { title: t('list'), path: paths.dashboard.employee.list },
+              { title: t('create'), path: paths.dashboard.employee.new },
+              { title: t('edit'), path: paths.dashboard.employee.demo.edit },
+              { title: t('account'), path: paths.dashboard.employee.account },
+            ],
+          },
+
           // PRODUCT
           {
             title: t('product'),

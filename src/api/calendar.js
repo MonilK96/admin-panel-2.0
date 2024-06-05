@@ -6,7 +6,6 @@ import { fetcher, endpoints } from 'src/utils/axios';
 // ----------------------------------------------------------------------
 
 const URL = endpoints.calendar;
-
 const options = {
   revalidateIfStale: false,
   revalidateOnFocus: false,
@@ -32,7 +31,25 @@ export function useGetEvents() {
   }, [data?.events, error, isLoading, isValidating]);
 
   return memoizedValue;
+  
 }
+
+export function useGetCalendar(page, limit) {
+   const URL = 'https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/event';
+   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+   const memoizedValue = useMemo(
+     () => ({
+       calendar: data || [],
+       calendarLoading: isLoading,
+       calendarError: error,
+       calendarValidating: isValidating,
+       calendarEmpty: !isLoading && !data?.length,
+     }),
+     [data, error, isLoading, isValidating]
+   );
+   return memoizedValue;
+}
+
 
 // ----------------------------------------------------------------------
 

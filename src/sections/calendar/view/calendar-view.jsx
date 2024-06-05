@@ -1,4 +1,4 @@
-import Calendar from '@fullcalendar/react'; // => request placed at the top
+import Calendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -21,7 +21,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { isAfter, isBetween } from 'src/utils/format-time';
 
 import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
-import { updateEvent, useGetEvents } from 'src/api/calendar';
+import { updateEvent, useGetCalendar, useGetEvents } from 'src/api/calendar';
 
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
@@ -32,6 +32,7 @@ import { useEvent, useCalendar } from '../hooks';
 import CalendarToolbar from '../calendar-toolbar';
 import CalendarFilters from '../calendar-filters';
 import CalendarFiltersResult from '../calendar-filters-result';
+import { Box } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,46 @@ const defaultFilters = {
 export default function CalendarView() {
   const theme = useTheme();
 
+  const dummyLeave = [
+    {
+      // _id: '665aedf6e9c824721663307b',
+      // event: 'sdsdsd',
+      // startDate: '2024-06-18T18:30:00.000Z',
+      // endDate: '2024-06-23T18:30:00.000Z',
+      // company_id: '664ec7b3671bf9a7f5366599',
+      // event_user_id: '664ec7b3671bf9a7f536659b',
+      // leave_type: 'festival holiday',
+      // leave_description: 'sdsdsdsdsds',
+      // leave_status: 'office',
+      // created_at: '2024-05-31T06:56:13.842Z',
+      // updated_at: '2024-05-31T06:56:13.842Z',
+      // deleted_at: null,
+      // __v: 0,
+      // firstName: 'Jeel  ',
+      // lastName: 'Kakadiya',
+      // color: 'blue',
+      // textColor: 'blue',
+
+      event: 'gothan chholano',
+      startDate: 1718003577806,
+      endDate: 1718176857806,
+      leave_type: 'festival holiday',
+      leave_description: 'gothan cholavathi eja pohachi che raja aapava namra vinanti',
+      leave_status: 'Pending',
+    },
+    {
+      startDate: Date(),
+      endDate: Date(),
+      event: 'Test Event 2',
+      leave_description: 'Description 2',
+      leave_status: 'Pending',
+      leave_type: 'other',
+      student: 'Student Name 2',
+    },
+  ];
+
+  // Transform the dummyLeave data to use `start` and `end` instead of `startDate` and `endDate`
+
   const settings = useSettingsContext();
 
   const smUp = useResponsive('up', 'sm');
@@ -55,15 +96,29 @@ export default function CalendarView() {
   const [filters, setFilters] = useState(defaultFilters);
 
   const { events, eventsLoading } = useGetEvents();
+  const { calendar } = useGetCalendar();
+
+  const leaveTypeColors = {
+    'festival holiday': 'blue',
+    'Student Leave': 'yellow',
+    'recaption leave': 'brown',
+    'other': 'red',
+  };
+  const transformedDummyLeave = dummyLeave.map((event) => ({
+    ...event,
+    start: new Date(event.startDate),
+    end: new Date(event.endDate),
+    title: event.event,
+    color: [leaveTypeColors[event.leave_type]] || 'gray',
+    textColor: [leaveTypeColors[event.leave_type]] || 'gray',
+  }));
 
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const {
     calendarRef,
-    //
     view,
     date,
-    //
     onDatePrev,
     onDateNext,
     onDateToday,
@@ -73,17 +128,14 @@ export default function CalendarView() {
     onClickEvent,
     onResizeEvent,
     onInitialView,
-    //
     openForm,
     onOpenForm,
     onCloseForm,
-    //
     selectEventId,
     selectedRange,
-    //
     onClickEventInFilters,
   } = useCalendar();
-
+  console.log("eve : ",dummyLeave);
   const currentEvent = useEvent(events, selectEventId, selectedRange, openForm);
 
   useEffect(() => {
@@ -109,14 +161,22 @@ export default function CalendarView() {
     dateError,
   });
 
+  const renderEventContent = (eventInfo) => {
+    return (
+      <Box
+        sx={{ height: "14px", fontSize: '12px', fontWeight: "600", alignSelf: "center" }}
+      >
+        {eventInfo.event.title}
+      </Box>
+    );
+  };
+
   const renderResults = (
     <CalendarFiltersResult
       filters={filters}
       onFilters={handleFilters}
-      //
       canReset={canReset}
       onResetFilters={handleResetFilters}
-      //
       results={dataFiltered.length}
       sx={{ mb: { xs: 3, md: 5 } }}
     />
@@ -157,7 +217,6 @@ export default function CalendarView() {
               onChangeView={onChangeView}
               onOpenFilters={openFilters.onTrue}
             />
-
             <Calendar
               weekends
               editable
@@ -171,7 +230,8 @@ export default function CalendarView() {
               initialView={view}
               dayMaxEventRows={3}
               eventDisplay="block"
-              events={dataFiltered}
+              events={transformedDummyLeave}
+              eventContent={renderEventContent}
               headerToolbar={false}
               select={onSelectRange}
               eventClick={onClickEvent}
@@ -193,7 +253,7 @@ export default function CalendarView() {
           </StyledCalendar>
         </Card>
       </Container>
-
+              {console.log("CE : ",currentEvent)}
       <Dialog
         fullWidth
         maxWidth="xs"
@@ -205,7 +265,7 @@ export default function CalendarView() {
         }}
       >
         <DialogTitle sx={{ minHeight: 76 }}>
-          {openForm && <> {currentEvent?.id ? 'Edit Event' : 'Add Event'}</>}
+          {openForm && <> {currentEvent ? 'Edit Event' : 'Add Event'}</>}
         </DialogTitle>
 
         <CalendarForm
@@ -218,15 +278,11 @@ export default function CalendarView() {
       <CalendarFilters
         open={openFilters.value}
         onClose={openFilters.onFalse}
-        //
         filters={filters}
         onFilters={handleFilters}
-        //
         canReset={canReset}
         onResetFilters={handleResetFilters}
-        //
         dateError={dateError}
-        //
         events={events}
         colorOptions={CALENDAR_COLOR_OPTIONS}
         onClickEvent={onClickEventInFilters}

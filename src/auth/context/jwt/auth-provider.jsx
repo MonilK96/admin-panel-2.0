@@ -5,6 +5,7 @@ import axios, { endpoints } from 'src/utils/axios';
 
 import { setSession } from './utils';
 import { AuthContext } from './auth-context';
+import { AUTH_API } from '../../../config-global';
 
 // ----------------------------------------------------------------------
 /**
@@ -54,7 +55,7 @@ const JWT_REFRESH = 'jwtRefresh';
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  
   const initialize = useCallback(async () => {
     try {
       const jwt = sessionStorage.getItem(JWT);
@@ -62,10 +63,10 @@ export function AuthProvider({ children }) {
 
       if (jwt && jwtRefresh) {
         setSession(jwt, jwtRefresh);
+        const url = `${AUTH_API}/api/users/me`;
+        const response = await axios.get(url);
 
-        const response = await axios.get(endpoints.auth.me);
-
-        const { user } = response.data;
+        const  user  = response?.data;
 
         dispatch({
           type: 'INITIAL',
@@ -107,10 +108,11 @@ export function AuthProvider({ children }) {
       password,
     };
 
-    const response = await axios.post(endpoints.auth.login, data);
+    const URL = `${AUTH_API}/api/auth/v2/login`;
+    const response = await axios.post(URL, data);
 
-    const { tokens, user } = response.data.data;
-    const { jwt, jwtRefresh } = tokens;
+    const { user } = response.data.data;
+    const { jwt, jwtRefresh } = user.other_info;
 
     setSession(jwt, jwtRefresh);
 
