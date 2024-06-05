@@ -42,6 +42,7 @@ import {
 import DemoTableRow from '../demo-table-row';
 import DemoTableToolbar from '../demo-table-toolbar';
 import DemoTableFiltersResult from '../demo-table-filters-result';
+import { useGetAllDemos } from 'src/api/demo';
 
 // ----------------------------------------------------------------------
 
@@ -50,10 +51,10 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS]
 const TABLE_HEAD = [
   { id: 'orderNumber', label: 'Order', width: 116 },
   { id: 'name', label: 'Customer' },
-  { id: 'createdAt', label: 'Date', width: 140 },
-  { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
-  { id: 'totalAmount', label: 'Price', width: 140 },
-  { id: 'status', label: 'Status', width: 110 },
+  { id: 'createdAt', label: 'Date', width: 300 },
+  // { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
+  // { id: 'totalAmount', label: 'Price', width: 140 },
+  { id: 'status', label: 'Status', width: 210 },
   { id: '', width: 88 },
 ];
 
@@ -76,6 +77,9 @@ export default function DemoListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
+
+  const { demo } = useGetAllDemos();
+  const { data } = demo;
 
   const [tableData, setTableData] = useState(_orders);
 
@@ -310,29 +314,6 @@ export default function DemoListView() {
           />
         </Card>
       </Container>
-
-      <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
-        title="Delete"
-        content={
-          <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
-          </>
-        }
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              handleDeleteRows();
-              confirm.onFalse();
-            }}
-          >
-            Delete
-          </Button>
-        }
-      />
     </>
   );
 }

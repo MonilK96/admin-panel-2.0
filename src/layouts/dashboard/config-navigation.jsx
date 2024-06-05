@@ -88,7 +88,6 @@ export function useNavData() {
             path: paths.dashboard.general.file,
             icon: ICONS.file,
           },
-          
         ],
       },
 
@@ -137,8 +136,6 @@ export function useNavData() {
             path: paths.dashboard.inquiry.root,
             icon: ICONS.inquiry,
           },
-          
-          
 
           // PRODUCT
           {
@@ -174,6 +171,17 @@ export function useNavData() {
             icon: ICONS.order,
             children: [
               { title: t('list'), path: paths.dashboard.demo.root },
+              // { title: t('details'), path: paths.dashboard.demo.demo.details },
+            ],
+          },
+
+          // SEMINAR
+          {
+            title: t('seminar'),
+            path: paths.dashboard.seminar.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.seminar.list },
               // { title: t('details'), path: paths.dashboard.demo.demo.details },
             ],
           },

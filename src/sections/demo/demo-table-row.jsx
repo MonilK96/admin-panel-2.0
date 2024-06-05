@@ -50,16 +50,19 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
             },
           }}
         >
-          {orderNumber}
+          {/* {orderNumber} */}
+          {'23'}
         </Box>
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
+        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} /> */}
 
         <ListItemText
-          primary={customer.name}
-          secondary={customer.email}
+          // primary={customer.name}
+          // secondary={customer.email}
+          primary={'ramu kaka'}
+          secondary={'ramu@gmail.com'}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
@@ -81,9 +84,9 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
         />
       </TableCell>
 
-      <TableCell align="center"> {totalQuantity} </TableCell>
+      {/* <TableCell align="center"> {totalQuantity} </TableCell> */}
 
-      <TableCell> {fCurrency(subTotal)} </TableCell>
+      {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
 
       <TableCell>
         <Label
@@ -112,9 +115,9 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
       </TableCell>
     </TableRow>
   );
@@ -142,14 +145,16 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
                 }}
               >
                 <Avatar
-                  src={item.coverUrl}
+                  src={
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxF2SCl6YA0josDEY9VZb8v9WNU5Oi8U_iaA&s'
+                  }
                   variant="rounded"
                   sx={{ width: 48, height: 48, mr: 2 }}
                 />
 
                 <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
+                  primary={"item.name"}
+                  secondary={"item.sku"}
                   primaryTypographyProps={{
                     typography: 'body2',
                   }}
@@ -177,7 +182,7 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
 
       {renderSecondary}
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
@@ -203,9 +208,9 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
           <Iconify icon="solar:eye-bold" />
           View
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
@@ -215,7 +220,7 @@ export default function DemoTableRow({ row, selected, onViewRow, onSelectRow, on
             Delete
           </Button>
         }
-      />
+      /> */}
     </>
   );
 }
