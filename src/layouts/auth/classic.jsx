@@ -94,17 +94,17 @@ export default function AuthClassicLayout({ children, image, title }) {
         ...bgGradient({
           color: alpha(
             theme.palette.background.default,
-            theme.palette.mode === 'light' ? 0.88 : 0.94
+            theme.palette.mode === 'light' ? 0.6 : 0.6
           ),
-          imgUrl: '/assets/background/overlay_2.jpg',
+          imgUrl: 'https://i.postimg.cc/02nW72yj/TPPS0009-min.jpg',
         }),
       }}
     >
-      <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center' }}>
+      {/* <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center' }}>
         {title || 'Hi, Welcome back'}
-      </Typography>
+      </Typography> */}
 
-      <Box
+      {/* <Box
         component="img"
         alt="auth"
         src={image || '/assets/illustrations/illustration_dashboard.png'}
@@ -115,9 +115,9 @@ export default function AuthClassicLayout({ children, image, title }) {
             xl: 720,
           },
         }}
-      />
+      /> */}
 
-      <Stack direction="row" spacing={2}>
+      {/* <Stack direction="row" spacing={2}>
         {METHODS.map((option) => (
           <Tooltip key={option.label} title={option.label}>
             <Link component={RouterLink} href={option.path}>
@@ -136,7 +136,7 @@ export default function AuthClassicLayout({ children, image, title }) {
             </Link>
           </Tooltip>
         ))}
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 

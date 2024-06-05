@@ -77,46 +77,36 @@ export default function JwtRegisterView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
-      <Typography variant="h4">Get started absolutely free</Typography>
-
-      <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2"> Already have an account? </Typography>
-
-        <Link href={paths.auth.jwt.login} component={RouterLink} variant="subtitle2">
-          Sign in
-        </Link>
-      </Stack>
+      <Typography variant="h4">Sign up your account</Typography>
     </Stack>
   );
 
-  const renderTerms = (
-    <Typography
-      component="div"
-      sx={{
-        mt: 2.5,
-        textAlign: 'center',
-        typography: 'caption',
-        color: 'text.secondary',
-      }}
-    >
-      {'By signing up, I agree to '}
-      <Link underline="always" color="text.primary">
-        Terms of Service
-      </Link>
-      {' and '}
-      <Link underline="always" color="text.primary">
-        Privacy Policy
-      </Link>
-      .
-    </Typography>
-  );
+  // const renderTerms = (
+  //   <Typography
+  //     component="div"
+  //     sx={{
+  //       mt: 2.5,
+  //       textAlign: 'center',
+  //       typography: 'caption',
+  //       color: 'text.secondary',
+  //     }}
+  //   >
+  //     {'By signing up, I agree to '}
+  //     <Link underline="always" color="text.primary">
+  //       Terms of Service
+  //     </Link>
+  //     {' and '}
+  //     <Link underline="always" color="text.primary">
+  //       Privacy Policy
+  //     </Link>
+  //     .
+  //   </Typography>
+  // );
 
   const renderForm = (
-    <Stack spacing={2.5}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <RHFTextField name="firstName" label="First name" />
-        <RHFTextField name="lastName" label="Last name" />
-      </Stack>
+    <Stack spacing={3}>
+      <RHFTextField name="firstName" label="First name" />
+      <RHFTextField name="lastName" label="Last name" />
 
       <RHFTextField name="email" label="Email address" />
 
@@ -135,6 +125,8 @@ export default function JwtRegisterView() {
         }}
       />
 
+     
+
       <LoadingButton
         fullWidth
         color="inherit"
@@ -145,6 +137,14 @@ export default function JwtRegisterView() {
       >
         Create account
       </LoadingButton>
+
+      <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'center' }}>
+        <Typography variant="body2"> Already have an account? </Typography>
+
+        <Link href={paths.auth.jwt.login} component={RouterLink} variant="subtitle2">
+          Sign in
+        </Link>
+      </Stack>
     </Stack>
   );
 
@@ -162,7 +162,7 @@ export default function JwtRegisterView() {
         {renderForm}
       </FormProvider>
 
-      {renderTerms}
+      {/* {renderTerms} */}
     </>
   );
 }
