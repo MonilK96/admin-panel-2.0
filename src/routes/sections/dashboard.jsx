@@ -33,6 +33,8 @@ const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
 // DEMO
 const DemoListPage = lazy(() => import('src/pages/dashboard/demo/list'));
+// SEMINAR
+const SeminarListPage = lazy(() => import('src/pages/dashboard/seminar/list'));
 // ATTENDANCE
 const AttendanceListPage = lazy(() => import('src/pages/dashboard/attendance/list'));
 // INVOICE
@@ -175,6 +177,14 @@ export const dashboardRoutes = [
         children: [
           { element: <DemoListPage />, index: true },
           { path: 'list', element: <DemoListPage /> },
+          // { path: ':id', element: <DemoDetailsPage /> },
+        ],
+      },
+      {
+        path: 'seminar',
+        children: [
+          { element: <SeminarListPage />, index: true },
+          { path: 'list', element: <SeminarListPage /> },
           // { path: ':id', element: <DemoDetailsPage /> },
         ],
       },

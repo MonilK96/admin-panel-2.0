@@ -1,14 +1,23 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
-import { fetcher } from 'src/utils/axios';
-export function useGetAllDemos() {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/demo?limit=10&page=1`;
-  const { data } = useSWR(URL, fetcher);
+
+import { fetcher } from '../utils/axios';
+
+export function useGetAllDemos(page, limit) {
+  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/demo?limit=10&page=1`;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  const demo =  data?.data || [];
   const memoizedValue = useMemo(
     () => ({
-      demo: data?.data?.data || [],
+      demo: demo,
+      demoLoading: isLoading,
+      demoError: error,
+      demoValidating: isValidating,
+      demoEmpty: !isLoading && !demo.length,
     }),
-    [data?.data]
-  );
+    [demo, error, isLoading, isValidating]
+    );
+
   return memoizedValue;
 }

@@ -199,6 +199,14 @@ export const paths = {
       //   details: `${ROOTS.DASHBOARD}/demo/${MOCK_ID}`,
       // },
     },
+    seminar: {  
+      root: `${ROOTS.DASHBOARD}/seminar`,
+      list: `${ROOTS.DASHBOARD}/seminar/list`,
+      // details: (id) => `${ROOTS.DASHBOARD}/seminar/${id}`,
+      // seminar: {
+      //   details: `${ROOTS.DASHBOARD}/seminar/${MOCK_ID}`,
+      // },
+    },
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
       // details: (id) => `${ROOTS.DASHBOARD}/attendance/${id}`,
