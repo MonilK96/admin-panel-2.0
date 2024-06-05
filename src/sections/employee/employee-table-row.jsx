@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import moment from 'moment'
+import moment from 'moment';
 
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -13,17 +13,25 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
+import { Box } from '@mui/system';
 import EmployeeQuickEditForm from './employee-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { avatar_url, role, email, contact, firstName, lastName, technology, joining_date } = row;
+export default function EmployeeTableRow({
+  row,
+  index,
+  selected,
+  onEditRow,
+  onSelectRow,
+  onDeleteRow,
+}) {
+  const { avatar_url, role, email, contact, firstName, lastName, technology, joining_date, dob } =
+    row;
 
   const confirm = useBoolean();
 
@@ -36,6 +44,10 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
       <TableRow hover selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox checked={selected} onClick={onSelectRow} />
+        </TableCell>
+
+        <TableCell>
+          <Box>{index + 1}</Box>
         </TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
@@ -57,8 +69,10 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{technology}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(joining_date).format("DD/MM/YYYY")}</TableCell>
-
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {moment(joining_date).format('DD/MM/YYYY')}
+        </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(dob).format('DD/MM/YYYY')}</TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <Tooltip title="Quick Edit" placement="top" arrow>
@@ -73,7 +87,11 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
         </TableCell>
       </TableRow>
 
-      <EmployeeQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />
+      <EmployeeQuickEditForm
+        currentEmployee={row}
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+      />
 
       <CustomPopover
         open={popover.open}
@@ -121,6 +139,7 @@ export default function EmployeeTableRow({ row, selected, onEditRow, onSelectRow
 EmployeeTableRow.propTypes = {
   onDeleteRow: PropTypes.func,
   onEditRow: PropTypes.func,
+  index: PropTypes.func,
   onSelectRow: PropTypes.func,
   row: PropTypes.object,
   selected: PropTypes.bool,

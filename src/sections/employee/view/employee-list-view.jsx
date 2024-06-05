@@ -1,28 +1,27 @@
 import isEqual from 'lodash/isEqual';
 import { useState, useCallback } from 'react';
-
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
-import IconButton from '@mui/material/IconButton';
-import TableContainer from '@mui/material/TableContainer';
-
+import {
+  Card,
+  Table,
+  Button,
+  Tooltip,
+  Container,
+  TableBody,
+  IconButton,
+  TableContainer,
+} from '@mui/material';
+import PropTypes from 'prop-types';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-
 import { useBoolean } from 'src/hooks/use-boolean';
-
-import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
-
+import { _roles } from 'src/_mock';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
+import axios from 'axios';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   useTable,
@@ -34,7 +33,6 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-
 import EmployeeTableRow from '../employee-table-row';
 import EmployeeTableToolbar from '../employee-table-toolbar';
 import EmployeeTableFiltersResult from '../employee-table-filters-result';
@@ -42,14 +40,15 @@ import { useGetEmployees } from '../../../api/employee';
 
 // ----------------------------------------------------------------------
 
-
 const TABLE_HEAD = [
+  { id: 'srNo', label: 'Sr No' },
   { id: 'name', label: 'Name' },
   { id: 'contact', label: 'Phone Number', width: 180 },
   { id: 'technology', label: 'Technology', width: 220 },
   { id: 'role', label: 'Role', width: 180 },
-  { id: 'joining_date', label: 'Joining Date', width: 100 },
-  { id: '', width: 88 },
+  { id: 'joiningDate', label: 'Joining Date', width: 120 },
+  { id: 'dob', label: 'Birth Date', width: 100 },
+  { id: '', width: 100 },
 ];
 
 const defaultFilters = {
@@ -62,18 +61,11 @@ const defaultFilters = {
 
 export default function EmployeeListView() {
   const { enqueueSnackbar } = useSnackbar();
-
   const table = useTable();
-
   const settings = useSettingsContext();
-
   const router = useRouter();
-
   const confirm = useBoolean();
-
-  const { employees, employeesLoading, employeesError, employeesEmpty } = useGetEmployees();
-
-  const [tableData, setTableData] = useState(employees);
+  const { employees,mutate } = useGetEmployees();
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -89,9 +81,7 @@ export default function EmployeeListView() {
   );
 
   const denseHeight = table.dense ? 56 : 56 + 20;
-
   const canReset = !isEqual(defaultFilters, filters);
-
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
@@ -109,31 +99,54 @@ export default function EmployeeListView() {
     setFilters(defaultFilters);
   }, []);
 
+  // Single Delete
   const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      enqueueSnackbar('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
+    async (_id) => {
+      try {
+        const response = await axios.delete(
+          `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${_id}/deleteEmployee`
+        );
+        if (response.status === 200) {
+          enqueueSnackbar(response.data.message, { variant: 'success' });
+          confirm.onFalse();
+          mutate();
+        } else {
+          enqueueSnackbar(response.data.message, { variant: 'error' });
+        }
+      } catch (error) {
+        console.error('Failed to delete Employee', error);
+        enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
+      }
     },
-    [dataInPage.length, enqueueSnackbar, table, tableData]
+    [enqueueSnackbar, mutate, confirm]
   );
 
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-
-    enqueueSnackbar('Delete success!');
-
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows({
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+  // Multiple Delete
+  const handleDeleteRows = useCallback(async () => {
+    try {
+      const sortedSelectedIds = [...table.selected].sort();
+      await Promise.all(
+        sortedSelectedIds.map(async (selectedId) => {
+          const response = await axios.delete(
+            `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/delete/all-employee`,
+            {
+              data: { ids: [selectedId] },
+            }
+          );
+          if (response.status === 200) {
+            enqueueSnackbar(response.data.data.message, { variant: 'success' });
+            mutate();
+            confirm.onFalse();
+          } else {
+            enqueueSnackbar(response.data.message, { variant: 'error' });
+          }
+        })
+      );
+    } catch (error) {
+      console.error('Failed to delete Employee', error);
+      enqueueSnackbar('Failed to delete Employee', { variant: 'error' });
+    }
+  }, [enqueueSnackbar, mutate, confirm, table.selected]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -142,22 +155,15 @@ export default function EmployeeListView() {
     [router]
   );
 
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      handleFilters('status', newValue);
-    },
-    [handleFilters]
-  );
-
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Employee', href: paths.dashboard.employee.root },
-            { name: 'List' },
+            { name: 'Employee', href: paths.dashboard.employee.list },
+            { name: 'Employee List' },
           ]}
           action={
             <Button
@@ -169,26 +175,17 @@ export default function EmployeeListView() {
               New Employee
             </Button>
           }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
-          <EmployeeTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            //
-            roleOptions={_roles}
-          />
+          <EmployeeTableToolbar filters={filters} onFilters={handleFilters} roleOptions={_roles} />
 
           {canReset && (
             <EmployeeTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
-              //
               onResetFilters={handleResetFilters}
-              //
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -202,7 +199,7 @@ export default function EmployeeListView() {
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  dataFiltered.map((row) => row.id)
+                  dataFiltered.map((row) => row._id)
                 )
               }
               action={
@@ -230,16 +227,16 @@ export default function EmployeeListView() {
                     )
                   }
                 />
-
                 <TableBody>
                   {dataFiltered
                     .slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    .map((row,index) => (
                       <EmployeeTableRow
                         key={row._id}
+                        index={index}
                         row={row}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
@@ -265,7 +262,6 @@ export default function EmployeeListView() {
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />

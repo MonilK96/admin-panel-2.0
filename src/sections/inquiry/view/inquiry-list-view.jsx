@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -10,8 +11,10 @@ import TableContainer from '@mui/material/TableContainer';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import axios from 'axios';
 
 import { isAfter, isBetween } from 'src/utils/format-time';
 
@@ -32,10 +35,10 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import axios from 'axios';
 import { useGetInquiry } from 'src/api/inquiry';
-import InquiryTableRow from '../inquiry-table-row';
 
+import InquiryTableRow from '../inquiry-table-row';
+import InquiryTableToolbar from '../inquiry-table-toolbar';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -44,14 +47,13 @@ const TABLE_HEAD = [
   { id: 'appointment', label: 'Appointment' },
   { id: 'contact', label: 'Contact', align: 'center' },
   { id: 'email', label: 'Email', align: 'center' },
-  { id: '' },
+  { id: 'demo', label: 'Demo', width: 110,align: 'center'  },
+  { id: '', width: 88 },
 ];
 
 const defaultFilters = {
   name: '',
   status: 'all',
-  startDate: null,
-  endDate: null,
 };
 
 // ----------------------------------------------------------------------
@@ -59,7 +61,7 @@ const defaultFilters = {
 export default function InquiryListView() {
   const { enqueueSnackbar } = useSnackbar();
 
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
+  const table = useTable();
 
   const settings = useSettingsContext();
 
@@ -69,8 +71,6 @@ export default function InquiryListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
   const { inquiry, inquiryError, mutate } = useGetInquiry();
-
-  const dateError = isAfter(filters.startDate, filters.endDate);
 
   useEffect(() => {
     if (inquiryError) {
@@ -82,7 +82,6 @@ export default function InquiryListView() {
     inputData: inquiry,
     comparator: getComparator(table.order, table.orderBy),
     filters,
-    dateError,
   });
 
   const dataInPage = dataFiltered.slice(
@@ -158,18 +157,11 @@ export default function InquiryListView() {
     }
   }, [enqueueSnackbar, mutate, confirm, table.selected]);
 
-  const handleViewRow = useCallback(
+  const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.order.details(id));
+      router.push(paths.dashboard.inquiry.edit(id));
     },
     [router]
-  );
-
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      handleFilters('status', newValue);
-    },
-    [handleFilters]
   );
 
   return (
@@ -178,22 +170,28 @@ export default function InquiryListView() {
         <CustomBreadcrumbs
           heading="Inquiry List"
           links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            {
-              name: 'Inquiry',
-              href: paths.dashboard.inquiry.root,
-            },
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Inquiry', href: paths.dashboard.inquiry.root },
             { name: 'Inquiry List' },
           ]}
+          action={
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.inquiry.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              New Inquiry
+            </Button>
+          }
           sx={{
             mb: { xs: 3, md: 5 },
           }}
         />
 
         <Card>
+          <InquiryTableToolbar filters={filters} onFilters={handleFilters} />
+
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
@@ -245,7 +243,7 @@ export default function InquiryListView() {
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
                         onDeleteRow={() => handleDeleteRow(row._id)}
-                        onViewRow={() => handleViewRow(row._id)}
+                        onEditRow={() => handleEditRow(row._id)}
                       />
                     ))}
 
@@ -293,8 +291,8 @@ export default function InquiryListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+function applyFilter({ inputData, comparator, filters }) {
+  const { status, name } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -308,21 +306,12 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (name) {
     inputData = inputData.filter(
-      (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
   if (status !== 'all') {
     inputData = inputData.filter((order) => order.status === status);
-  }
-
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
-    }
   }
 
   return inputData;

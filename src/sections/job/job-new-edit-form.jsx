@@ -143,6 +143,7 @@ export default function JobNewEditForm({ currentJob }) {
           <Stack spacing={3} sx={{ p: 3 }}>
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Title</Typography>
+              
               <RHFTextField name="title" placeholder="Ex: Software Engineer..." />
             </Stack>
 

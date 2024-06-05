@@ -8,6 +8,7 @@ import {
   Checkbox,
   TableCell,
   IconButton,
+  Tooltip,
 } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -16,12 +17,13 @@ import { fDate } from 'src/utils/format-time';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import DemoNewEditForm from './Demo-new-edit-form';
 
 export default function InquiryTableRow({
   row,
   index,
   selected,
-  onViewRow,
+  onEditRow,
   onSelectRow,
   onDeleteRow,
 }) {
@@ -30,35 +32,42 @@ export default function InquiryTableRow({
   const confirm = useBoolean();
   const popover = usePopover();
 
-  const renderPrimary = (
-    <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
-
-      <TableCell>
-        <Box onClick={onViewRow}>{index + 1}</Box>
-      </TableCell>
-
-      <TableCell>{firstName + ' ' + lastName}</TableCell>
-
-      <TableCell>{fDate(dob)}</TableCell>
-
-      <TableCell align="center"> {contact} </TableCell>
-
-      <TableCell align="center"> {email} </TableCell>
-
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  );
+  const quickEdit = useBoolean();
 
   return (
     <>
-      {renderPrimary}
+      <TableRow hover selected={selected}>
+        <TableCell padding="checkbox">
+          <Checkbox checked={selected} onClick={onSelectRow} />
+        </TableCell>
+
+        <TableCell>
+          <Box>{index + 1}</Box>
+        </TableCell>
+
+        <TableCell>{firstName + lastName}</TableCell>
+
+        <TableCell>{fDate(dob)}</TableCell>
+
+        <TableCell align="center"> {contact} </TableCell>
+
+        <TableCell align="center"> {email} </TableCell>
+
+        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' ,align: 'center' }}>
+          <Tooltip title="Demo" placement="top" arrow>
+            <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
+              <Iconify icon="solar:pen-bold" sx={{textAlign: 'center' }}/>
+            </IconButton>
+          </Tooltip>
+        </TableCell>
+
+        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -78,14 +87,20 @@ export default function InquiryTableRow({
 
         <MenuItem
           onClick={() => {
-            onViewRow();
+            onEditRow();
             popover.onClose();
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
+          Edit
         </MenuItem>
       </CustomPopover>
+
+      <DemoNewEditForm
+        currentId={row}
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+      />
 
       <ConfirmDialog
         open={confirm.value}
@@ -105,8 +120,8 @@ export default function InquiryTableRow({
 InquiryTableRow.propTypes = {
   row: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
-  selected: PropTypes.bool,
-  onViewRow: PropTypes.func.isRequired,
+  selected: PropTypes.bool.isRequired,
+  onEditRow: PropTypes.func.isRequired,
   onDeleteRow: PropTypes.func.isRequired,
   onSelectRow: PropTypes.func.isRequired,
 };
