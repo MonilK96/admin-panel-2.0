@@ -129,7 +129,7 @@ export const dashboardRoutes = [
           { element: <InquiryListPage />, index: true },
           { path: 'list', element: <InquiryListPage /> },
           { path: 'new', element: <InquiryCreatePage /> },
-          { path: 'edit', element: <InquiryEditPage /> },
+          { path: ':id/edit', element: <InquiryEditPage /> },
         ],
       },
       {

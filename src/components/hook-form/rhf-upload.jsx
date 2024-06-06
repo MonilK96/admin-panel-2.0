@@ -6,8 +6,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { Upload, UploadBox, UploadAvatar } from '../upload';
 
 // ----------------------------------------------------------------------
-
-export function RHFUploadAvatar({ name, ...other }) {
+export function RHFUploadAvatar({ name, onDrop, helperText, ...other }) {
   const { control } = useFormContext();
 
   return (
@@ -16,8 +15,13 @@ export function RHFUploadAvatar({ name, ...other }) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <div>
-          <UploadAvatar error={!!error} file={field.value} {...other} />
-
+          <UploadAvatar
+            error={!!error}
+            file={field.value}
+            onDrop={onDrop}
+            {...other}
+          />
+          {helperText}
           {!!error && (
             <FormHelperText error sx={{ px: 2, textAlign: 'center' }}>
               {error.message}
@@ -30,9 +34,10 @@ export function RHFUploadAvatar({ name, ...other }) {
 }
 
 RHFUploadAvatar.propTypes = {
-  name: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  onDrop: PropTypes.func.isRequired,
+  helperText: PropTypes.node,
 };
-
 // ----------------------------------------------------------------------
 
 export function RHFUploadBox({ name, ...other }) {
@@ -50,7 +55,7 @@ export function RHFUploadBox({ name, ...other }) {
 }
 
 RHFUploadBox.propTypes = {
-  name: PropTypes.string,
+  name: PropTypes.string.isRequired,
 };
 
 // ----------------------------------------------------------------------
@@ -101,5 +106,5 @@ export function RHFUpload({ name, multiple, helperText, ...other }) {
 RHFUpload.propTypes = {
   helperText: PropTypes.string,
   multiple: PropTypes.bool,
-  name: PropTypes.string,
+  name: PropTypes.string.isRequired,
 };
