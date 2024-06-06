@@ -18,8 +18,7 @@ export default function UserEditPage() {
         <title> Dashboard: Student Edit</title>
       </Helmet>
 
-      <StudentEditView id={`${id}`} />
-      {/* <GuardianView id={`${id}`} /> */}
+      <GuardianView id={`${id}`} />
     </>
   );
 }
