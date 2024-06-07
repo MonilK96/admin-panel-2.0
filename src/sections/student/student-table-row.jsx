@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import moment from 'moment'
+import moment from 'moment';
 
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -22,8 +22,16 @@ import StudentQuickEditForm from './student-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function StudentTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { firstName, lastName, profile_pic, course, joining_date,  email, contact } = row.personal_info;
+export default function StudentTableRow({
+  row,
+  selected,
+  onEditRow,
+  onSelectRow,
+  onDeleteRow,
+  onGuardianRow,
+}) {
+  const { firstName, lastName, profile_pic, course, joining_date, email, contact } =
+    row.personal_info;
 
   const confirm = useBoolean();
 
@@ -38,7 +46,9 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: "center" }}>{row.enrollment_no}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
+          {row.enrollment_no}
+        </TableCell>
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar alt={`${firstName} ${lastName}`} src={profile_pic} sx={{ mr: 2 }} />
 
@@ -57,7 +67,9 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{course}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{moment(joining_date).format("DD/MM/YYYY")}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {moment(joining_date).format('DD/MM/YYYY')}
+        </TableCell>
 
         <TableCell>
           <Label
@@ -113,6 +125,15 @@ export default function StudentTableRow({ row, selected, onEditRow, onSelectRow,
         >
           <Iconify icon="solar:pen-bold" />
           Edit
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onGuardianRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          Guardian
         </MenuItem>
       </CustomPopover>
 

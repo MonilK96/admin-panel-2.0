@@ -143,6 +143,7 @@ export const paths = {
       account: `${ROOTS.DASHBOARD}/student/account`,
       edit: (id) => `${ROOTS.DASHBOARD}/student/${id}/edit`,
       view: (id) => `${ROOTS.DASHBOARD}/student/${id}`,
+      guaridiandetails: (id) => `${ROOTS.DASHBOARD}/student/${id}/guaridiandetails`,
       demo: {
         edit: `${ROOTS.DASHBOARD}/student/${MOCK_ID}/edit`,
         view: `${ROOTS.DASHBOARD}/student/${MOCK_ID}`,
@@ -225,6 +226,14 @@ export const paths = {
       // details: (id) => `${ROOTS.DASHBOARD}/demo/${id}`,
       // demo: {
       //   details: `${ROOTS.DASHBOARD}/demo/${MOCK_ID}`,
+      // },
+    },
+    seminar: {
+      root: `${ROOTS.DASHBOARD}/seminar`,
+      list: `${ROOTS.DASHBOARD}/seminar/list`,
+      // details: (id) => `${ROOTS.DASHBOARD}/seminar/${id}`,
+      // seminar: {
+      //   details: `${ROOTS.DASHBOARD}/seminar/${MOCK_ID}`,
       // },
     },
     attendance: {

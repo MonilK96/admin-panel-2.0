@@ -55,6 +55,7 @@ const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
 const StudentAccountPage = lazy(() => import('src/pages/dashboard/student/account'));
 const StudentCreatePage = lazy(() => import('src/pages/dashboard/student/new'));
 const StudentEditPage = lazy(() => import('src/pages/dashboard/student/edit'));
+const GuardianDetailsPage = lazy(() => import('src/pages/dashboard/student/guardian'));
 // EMPLOYEE
 const EmployeeProfilePage = lazy(() => import('src/pages/dashboard/employee/profile'));
 const EmployeeCardsPage = lazy(() => import('src/pages/dashboard/employee/cards'));
@@ -139,6 +140,7 @@ export const dashboardRoutes = [
           { path: 'list', element: <StudentListPage /> },
           { path: 'new', element: <StudentCreatePage /> },
           { path: ':id/edit', element: <StudentEditPage /> },
+          { path: ':id/guaridiandetails', element: <GuardianDetailsPage /> },
           { path: 'account', element: <StudentAccountPage /> },
         ],
       },
