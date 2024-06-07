@@ -66,7 +66,6 @@ export default function EmployeeListView() {
   const router = useRouter();
   const confirm = useBoolean();
   const { employees,mutate } = useGetEmployees();
-
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
@@ -74,11 +73,6 @@ export default function EmployeeListView() {
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
 
   const denseHeight = table.dense ? 56 : 56 + 20;
   const canReset = !isEqual(defaultFilters, filters);
