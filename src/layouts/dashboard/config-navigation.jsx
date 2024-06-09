@@ -115,6 +115,7 @@ export function useNavData() {
               { title: t('account'), path: paths.dashboard.user.account },
             ],
           },
+
           // STUDENT
           {
             title: t('student'),
@@ -181,11 +182,11 @@ export function useNavData() {
           },
 
           // SEMINAR
-          // {
-          //   title: t('seminar'),
-          //   path: paths.dashboard.seminar.root,
-          //   icon: ICONS.order,
-          // },
+          {
+            title: t('seminar'),
+            path: paths.dashboard.seminar.root,
+            icon: ICONS.order,
+          },
 
           // ATTENDANCE
           {
@@ -195,6 +196,24 @@ export function useNavData() {
             children: [
               { title: t('list'), path: paths.dashboard.attendance.root },
               // { title: t('details'), path: paths.dashboard.attendance.demo.details },
+            ],
+          },
+          // EXPENSES
+          {
+            title: t('expenses'),
+            path: paths.dashboard.expenses.list,
+            icon: ICONS.analytics,
+            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+
+          // BATCH
+          {
+            title: t('batches'),
+            path: paths.dashboard.batches.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.batches.root },
+              { title: t('details'), path: paths.dashboard.batches.demo.details },
             ],
           },
 

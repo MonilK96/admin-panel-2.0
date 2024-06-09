@@ -5,8 +5,13 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { AuthGuard } from 'src/auth/guard';
 import { LoadingScreen } from 'src/components/loading-screen';
-
-
+import UserProfile from 'src/pages/dashboard/profile/profile';
+import ExpenseListPage from 'src/pages/dashboard/expenses/list';
+import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
+import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
+import BatchListPage from 'src/pages/dashboard/batches/list';
+import BatchCreatePage from 'src/pages/dashboard/batches/create';
+import BatchEditPage from 'src/pages/dashboard/batches/edit';
 
 // ----------------------------------------------------------------------
 
@@ -182,6 +187,29 @@ export const dashboardRoutes = [
           { element: <DemoListPage />, index: true },
           { path: 'list', element: <DemoListPage /> },
           // { path: ':id', element: <DemoDetailsPage /> },
+        ],
+      },
+      {
+        path: 'profile',
+        element: <UserProfile />,
+      },
+      {
+        path: 'expenses',
+        children: [
+          { element: <ExpenseListPage />, index: true },
+          { path: 'list', element: <ExpenseListPage /> },
+          { path: 'new', element: <ExpensesCreatePage /> },
+          { path: ':id/edit', element: <ExpensesEditPage /> },
+        ],
+      },
+      {
+        path: 'batches',
+        children: [
+          { element: <BatchListPage />, index: true },
+          { path: 'list', element: <BatchListPage /> },
+          { path: ':id', element: <OrderDetailsPage /> },
+          { path: 'new', element: <BatchCreatePage /> },
+          { path: ':id/edit', element: <BatchEditPage /> },
         ],
       },
       {

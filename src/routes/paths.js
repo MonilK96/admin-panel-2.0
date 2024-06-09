@@ -106,6 +106,7 @@ export const paths = {
     calendar: `${ROOTS.DASHBOARD}/calendar`,
     fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     permission: `${ROOTS.DASHBOARD}/permission`,
+
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
       ecommerce: `${ROOTS.DASHBOARD}/ecommerce`,
@@ -115,6 +116,7 @@ export const paths = {
       file: `${ROOTS.DASHBOARD}/file`,
       fees: `${ROOTS.DASHBOARD}/fees`,
     },
+
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,
@@ -127,9 +129,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
       },
     },
-    profile: {
-      root: `${ROOTS.DASHBOARD}/profile`,
-    },
+
     inquiry: {
       root: `${ROOTS.DASHBOARD}/inquiry`,
       new: `${ROOTS.DASHBOARD}/inquiry/new`,
@@ -139,6 +139,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/inquiry/${MOCK_ID}/edit`,
       },
     },
+
     student: {
       root: `${ROOTS.DASHBOARD}/student`,
       new: `${ROOTS.DASHBOARD}/student/new`,
@@ -153,6 +154,7 @@ export const paths = {
         view: `${ROOTS.DASHBOARD}/student/${MOCK_ID}`,
       },
     },
+
     employee: {
       root: `${ROOTS.DASHBOARD}/employee`,
       new: `${ROOTS.DASHBOARD}/employee/new`,
@@ -165,12 +167,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/employee/${MOCK_ID}/edit`,
       },
     },
-    expenses: {
-      root: `${ROOTS.DASHBOARD}/expenses`,
-      list: `${ROOTS.DASHBOARD}/expenses/list`,
-      edit: (id) => `${ROOTS.DASHBOARD}/expenses/${id}/edit`,
-      new: `${ROOTS.DASHBOARD}/expenses/new`,
-    },
+
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
@@ -181,12 +178,14 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
       },
     },
-    // seminar: {
-    //   root: `${ROOTS.DASHBOARD}/seminar`,
-    //   new: `${ROOTS.DASHBOARD}/seminar`,
-    //   list: `${ROOTS.DASHBOARD}/seminar/list`,
-    //   edit: `${ROOTS.DASHBOARD}/seminar/edit`,
-    // },
+
+    seminar: {
+      root: `${ROOTS.DASHBOARD}/seminar`,
+      new: `${ROOTS.DASHBOARD}/seminar`,
+      list: `${ROOTS.DASHBOARD}/seminar/list`,
+      edit: `${ROOTS.DASHBOARD}/seminar/edit`,
+    },
+
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,
       new: `${ROOTS.DASHBOARD}/invoice/new`,
@@ -197,6 +196,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
       },
     },
+
     post: {
       root: `${ROOTS.DASHBOARD}/post`,
       new: `${ROOTS.DASHBOARD}/post/new`,
@@ -207,6 +207,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}/edit`,
       },
     },
+
     order: {
       root: `${ROOTS.DASHBOARD}/order`,
       details: (id) => `${ROOTS.DASHBOARD}/order/${id}`,
@@ -215,7 +216,17 @@ export const paths = {
       },
     },
 
-    // batches
+    profile: {
+      root: `${ROOTS.DASHBOARD}/profile`,
+    },
+
+    expenses: {
+      root: `${ROOTS.DASHBOARD}/expenses`,
+      list: `${ROOTS.DASHBOARD}/expenses/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/expenses/${id}/edit`,
+      new: `${ROOTS.DASHBOARD}/expenses/new`,
+    },
+
     batches: {
       root: `${ROOTS.DASHBOARD}/batches`,
       details: (id) => `${ROOTS.DASHBOARD}/batches/${id}`,
@@ -223,30 +234,22 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/batches/${MOCK_ID}`,
       },
       new: `${ROOTS.DASHBOARD}/batches/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/batches/${id}/edit`,
     },
 
     demo: {
       root: `${ROOTS.DASHBOARD}/demo`,
-      // details: (id) => `${ROOTS.DASHBOARD}/demo/${id}`,
-      // demo: {
-      //   details: `${ROOTS.DASHBOARD}/demo/${MOCK_ID}`,
-      // },
     },
+
     seminar: {
       root: `${ROOTS.DASHBOARD}/seminar`,
       list: `${ROOTS.DASHBOARD}/seminar/list`,
-      // details: (id) => `${ROOTS.DASHBOARD}/seminar/${id}`,
-      // seminar: {
-      //   details: `${ROOTS.DASHBOARD}/seminar/${MOCK_ID}`,
-      // },
     },
+
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,
-      // details: (id) => `${ROOTS.DASHBOARD}/attendance/${id}`,
-      // demo: {
-      // details: `${ROOTS.DASHBOARD}/attendance/${MOCK_ID}`,
-      // },
     },
+
     job: {
       root: `${ROOTS.DASHBOARD}/job`,
       new: `${ROOTS.DASHBOARD}/job/new`,
@@ -257,6 +260,7 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/job/${MOCK_ID}/edit`,
       },
     },
+
     tour: {
       root: `${ROOTS.DASHBOARD}/tour`,
       new: `${ROOTS.DASHBOARD}/tour/new`,
