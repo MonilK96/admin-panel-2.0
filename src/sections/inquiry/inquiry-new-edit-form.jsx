@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'; // Added useState
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
@@ -7,7 +7,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Autocomplete, CardHeader, TextField, Typography } from '@mui/material'; // Added Button
+import { Autocomplete, CardHeader, TextField, Typography } from '@mui/material';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFMultiSelect,
@@ -25,9 +25,11 @@ import {
   INQUIRY_SUGGESTED_IN,
 } from 'src/_mock/_inquiry';
 import { Box } from '@mui/system';
+import { useAuthContext } from 'src/auth/hooks';
 import countrystatecity from '../../_mock/map/csc.json';
 
 export default function InquiryNewEditForm({ inquiryId }) {
+  const { user } = useAuthContext();
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -49,12 +51,7 @@ export default function InquiryNewEditForm({ inquiryId }) {
       occupation: '',
       email: '',
       education: '',
-      address_line1: '',
-      address_line2: '',
-      country: '',
-      state: '',
-      city: '',
-      zip_code: '',
+      address: { address_line1: '', address_line2: '', country: '', state: '', city: '',zip_code:'' },
       fatherName: '',
       father_contact: '',
       father_occupation: '',
@@ -76,29 +73,31 @@ export default function InquiryNewEditForm({ inquiryId }) {
     const fetchInquiryById = async () => {
       try {
         if (inquiryId) {
-          const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${inquiryId}/inquiry`;
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry/${inquiryId}`;
           const response = await axios.get(URL);
-          const { data } = response;
+          const { data } = response.data;
           reset({
-            firstName: data.data.inquiry.firstName,
-            lastName: data.data.inquiry.lastName,
-            contact: data.data.inquiry.contact,
-            dob: data.data.inquiry.dob ? new Date(data.data.inquiry.dob) : null,
-            occupation: data.data.inquiry.occupation,
-            email: data.data.inquiry.email,
-            education: data.data.inquiry.education,
-            address_line1: data.data.inquiry.address.address_line1,
-            address_line2: data.data.inquiry.address.address_line2,
-            country: data.data.inquiry.address.country,
-            state: data.data.inquiry.address.state,
-            city: data.data.inquiry.address.city,
-            zip_code: data.data.inquiry.address.zip_code,
-            fatherName: data.data.inquiry.fatherName,
-            father_contact: data.data.inquiry.father_contact,
-            father_occupation: data.data.inquiry.father_occupation,
-            reference_by: data.data.inquiry.reference_by,
-            interested_in: data.data.inquiry.interested_in,
-            suggested_by: data.data.inquiry.suggested_by,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            contact: data.contact,
+            dob: data.dob ? new Date(data.dob) : null,
+            occupation: data.occupation,
+            email: data.email,
+            education: data.education,
+            address: {
+              address_line1: data.address.address_line1,
+              address_line2: data.address.address_line2,
+              country: data.address.country,
+              state: data.address.state,
+              city: data.address.city,
+              zip_code: data.address.zip_code,
+            },
+            fatherName: data.fatherName,
+            father_contact: data.father_contact,
+            father_occupation: data.father_occupation,
+            reference_by: data.reference_by,
+            interested_in: data.interested_in,
+            suggested_by: data.suggested_by,
           });
         }
       } catch (error) {
@@ -110,31 +109,58 @@ export default function InquiryNewEditForm({ inquiryId }) {
   }, [inquiryId, reset]);
 
   const postInquiry = async (newInquiry) => {
-    const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/inquiry`;
+    const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/inquiry`;
+    console.log(URL);
     const response = await axios.post(URL, newInquiry);
     return response.data;
   };
 
-  async function updateInquiry(id, data) {
+  const updateInquiry = async (addInquiry) => {
     try {
-      const apiEndpoint = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${id}/updateInquiry`;
-      const response = await axios.put(apiEndpoint, data);
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry/${inquiryId}`;
+      const response = await axios.put(URL, addInquiry);
       return response.data;
     } catch (error) {
       console.error('Error updating inquiry:', error.message);
       throw error;
     }
-  }
+  };
+
   const onSubmit = handleSubmit(async (data) => {
+    const addInquiry = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      contact: data.contact,
+      dob: data.dob,
+      occupation: data.occupation,
+      email: data.email,
+      education: data.education,
+      address: {
+        address_line1: data.address.address_line1,
+        address_line2: data.address.address_line2,
+        country: data.address.country,
+        state: data.address.state,
+        city: data.address.city,
+        zip_code: data.address.zip_code,
+      },
+      fatherName: data.fatherName,
+      father_contact: data.father_contact,
+      father_occupation: data.father_occupation,
+      reference_by: data.reference_by,
+      interested_in: data.interested_in,
+      suggested_by: data.suggested_by,
+    };
     try {
       let response;
+
       if (inquiryId) {
-        response = await updateInquiry(inquiryId, data);
+        response = await updateInquiry(addInquiry);
+        console.log('update', response);
       } else {
-        response = await postInquiry(data);
+        response = await postInquiry(addInquiry);
       }
-      enqueueSnackbar(inquiryId ? response.data.message : response.message, { variant: 'success' });
-      router.push(paths.dashboard.inquiry.root);
+      enqueueSnackbar(inquiryId ? response.message : response.message, { variant: 'success' });
+      router.push(paths.dashboard.inquiry.list);
     } catch (error) {
       console.error(error);
       enqueueSnackbar(error.response.data.message, { variant: 'error' });
@@ -224,10 +250,10 @@ export default function InquiryNewEditForm({ inquiryId }) {
                 md: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="address_line1" label="Address 1" />
-              <RHFTextField name="address_line2" label="Address 2" />
+              <RHFTextField name="address.address_line1" label="Address 1" />
+              <RHFTextField name="address.address_line2" label="Address 2" />
               <Controller
-                name="country"
+                name="address.country"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
@@ -241,15 +267,15 @@ export default function InquiryNewEditForm({ inquiryId }) {
                 )}
               />
               <Controller
-                name="state"
+                name="address.state"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
                     options={
-                      watch('country')
+                      watch('address.country')
                         ? countrystatecity
-                            .find((country) => country.name === watch('country'))
+                            .find((country) => country.name === watch('address.country'))
                             ?.states.map((state) => state.name) || []
                         : []
                     }
@@ -261,16 +287,16 @@ export default function InquiryNewEditForm({ inquiryId }) {
                 )}
               />
               <Controller
-                name="city"
+                name="address.city"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
                     options={
-                      watch('state')
+                      watch('address.state')
                         ? countrystatecity
-                            .find((country) => country.name === watch('country'))
-                            ?.states.find((state) => state.name === watch('state'))
+                            .find((country) => country.name === watch('address.country'))
+                            ?.states.find((state) => state.name === watch('address.state'))
                             ?.cities.map((city) => city.name) || []
                         : []
                     }
@@ -281,7 +307,7 @@ export default function InquiryNewEditForm({ inquiryId }) {
                   />
                 )}
               />
-              <RHFTextField name="zip_code" label="Zip Code" />
+              <RHFTextField name="address.zip_code" label="Zip Code" />
             </Box>
           </Stack>
         </Card>
@@ -297,7 +323,7 @@ export default function InquiryNewEditForm({ inquiryId }) {
             Father Details
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Faher info, Contact, Occupation...
+            Father info, Contact, Occupation...
           </Typography>
         </Grid>
       )}
@@ -332,7 +358,7 @@ export default function InquiryNewEditForm({ inquiryId }) {
             Other Details
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            How did you come,Suggested By ,Interested in...
+            How did you come, Suggested By, Interested in...
           </Typography>
         </Grid>
       )}

@@ -5,18 +5,26 @@ import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
 
 // ----------------------------------------------------------------------
 
-export default function useEvent(events, selectEventId, selectedRange, openForm) {
-  const currentEvent = events.find((event) => event.id === selectEventId);
-
+export default function useEvent(dummyLeave, selectEventId, selectedRange, openForm) {
+  const currentEvent = dummyLeave.find((event) => event?.id === selectEventId);
   const defaultValues = useMemo(
     () => ({
-      id: '',
-      title: '',
-      description: '',
-      color: CALENDAR_COLOR_OPTIONS[1],
-      allDay: false,
-      start: selectedRange ? selectedRange.start : new Date().getTime(),
-      end: selectedRange ? selectedRange.end : new Date().getTime(),
+      // id: '',
+      event: "",
+      leave_description: '',
+      leave_type: '',
+      leave_status: '',
+      reason: '',
+      startDate: selectedRange ? selectedRange.start : new Date().getTime(),
+      endDate: selectedRange ? selectedRange.end : new Date().getTime(),
+
+
+      // title: '',
+      // description: '',
+      // color: CALENDAR_COLOR_OPTIONS[1],
+      // allDay: false,
+      // start: selectedRange ? selectedRange.start : new Date().getTime(),
+      // end: selectedRange ? selectedRange.end : new Date().getTime(),
     }),
     [selectedRange]
   );

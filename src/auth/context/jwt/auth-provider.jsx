@@ -55,7 +55,7 @@ const JWT_REFRESH = 'jwtRefresh';
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  
   const initialize = useCallback(async () => {
     try {
       const jwt = sessionStorage.getItem(JWT);
@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
         const url = `${AUTH_API}/api/users/me`;
         const response = await axios.get(url);
 
-        const user  = response.data;
+        const  user  = response?.data;
 
         dispatch({
           type: 'INITIAL',
@@ -111,7 +111,7 @@ export function AuthProvider({ children }) {
     const URL = `${AUTH_API}/api/auth/v2/login`;
     const response = await axios.post(URL, data);
 
-    const { user } = response.data.data;
+    const  {user}  = response.data.data;
     const { jwt, jwtRefresh } = user.other_info;
 
     setSession(jwt, jwtRefresh);

@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+
 import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -10,9 +11,10 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import LoadingButton from '@mui/lab/LoadingButton';
+
 import { paths } from 'src/routes/paths';
+
 import { useRouter } from 'src/routes/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { Autocomplete, TextField } from '@mui/material';
@@ -25,39 +27,40 @@ import FormProvider, {
 import { ROLE, EMPLOYEE_GENDER } from 'src/_mock/_employee';
 import axios from 'axios';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useAuthContext } from 'src/auth/hooks';
 import countrystatecity from '../../_mock/map/csc.json';
 
 // ----------------------------------------------------------------------
 
 export default function EmployeeNewEditForm({ employeeId }) {
+  const { user } = useAuthContext();
   const [profilePic, setProfilePic] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
 
-  const NewEMployeeSchema = Yup.object().shape({
+  const NewEmployeeSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
     lastName: Yup.string().required('Last name is required'),
     contact: Yup.string().required('Phone number is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     gender: Yup.string().required('Gender is required'),
-    dob: Yup.date().required('Date of birth is required'),
-    experience: Yup.string().required('Experience is required'),
-    role: Yup.string().required('Role is required'),
-    technology: Yup.string().required('Technology is required'),
-    joining_date: Yup.date().required('Joining date is required'),
-    qualification: Yup.string().required('Qualification is required'),
-    address_1: Yup.string().required('Address is required'),
-    address_2: Yup.string().optional(),
-    country: Yup.string().required('Country is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    zipcode: Yup.string().required('Zip code is required'),
-    avatar_url: Yup.mixed().nullable(),
+    // dob: Yup.date().required('Date of birth is required'),
+    // experience: Yup.string().required('Experience is required'),
+    // role: Yup.string().required('Role is required'),
+    // technology: Yup.string().required('Technology is required'),
+    // joining_date: Yup.date().required('Joining date is required'),
+    // qualification: Yup.string().required('Qualification is required'),
+    // address_1: Yup.string().required('Address is required'),
+    // address_2: Yup.string().optional(),
+    // country: Yup.string().required('Country is required'),
+    // state: Yup.string().required('State is required'),
+    // city: Yup.string().required('City is required'),
+    // zipcode: Yup.string().required('Zip code is required'),
   });
 
   const methods = useForm({
-    resolver: yupResolver(NewEMployeeSchema),
+    resolver: yupResolver(NewEmployeeSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -70,12 +73,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
       technology: '',
       experience: '',
       joining_date: null,
-      address_1: '',
-      address_2: '',
-      country: '',
-      state: '',
-      city: '',
-      zipcode: '',
+      address: { address_1: '', address_2: '', country: '', state: '', city: '', zipcode: '' },
       avatar_url: null,
     },
   });
@@ -89,69 +87,93 @@ export default function EmployeeNewEditForm({ employeeId }) {
   } = methods;
 
   useEffect(() => {
-    const fetchInquiryById = async () => {
+    const fetchEmployeeById = async () => {
       try {
         if (employeeId) {
-          const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${employeeId}/employee`;
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
           const response = await axios.get(URL);
           const { data } = response.data;
+          console.log('get', data);
+
           reset({
             firstName: data.firstName,
             lastName: data.lastName,
             contact: data.contact,
             dob: data.dob ? new Date(data.dob) : null,
-            joining_date: data.joining_date ? new Date(data.joining_date) : null,
-            qualification: data.qualification,
-            experience: data.experience,
-            gender: data.gender,
-            technology: data.technology,
             email: data.email,
-            education: data.education,
+            gender: data.gender,
             role: data.role,
-            address_1: data.address.address_1,
-            address_2: data.address.address_2,
-            country: data.address.country,
-            state: data.address.state,
-            city: data.address.city,
-            zipcode: data.address.zipcode,
-            avatar_url: data.avatar_url,
+            qualification: data.qualification,
+            technology: data.technology,
+            experience: data.experience,
+            joining_date: data.joining_date ? new Date(data.joining_date) : null,
+            address_1: data.address?.address_1 || '',
+            address_2: data.address?.address_2 || '', 
+            country: data.address?.country || '', 
+            state: data.address?.state || '', 
+            city: data.address?.city || '', 
+            zipcode: data.address?.zipcode || '', 
+            avatar_url: data.avatar_url || '', 
           });
           setProfilePic(data.avatar_url);
         }
       } catch (error) {
-        console.error('Failed to fetch inquiry:', error);
+        console.error('Failed to fetch employee:', error);
       }
     };
 
-    fetchInquiryById();
+    fetchEmployeeById();
   }, [employeeId, reset]);
 
-  // Add inquiry
   const createEmployee = async (newEmployee) => {
-    const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/employee`;
+    const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/employee`;
     const response = await axios.post(URL, newEmployee);
     return response.data;
   };
 
-  // Update Employee
-  async function UpdateEmployee(id, data) {
+  async function updateEmployee(id, data) {
     try {
-      const apiEndpoint = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${employeeId}/updateEmployee`;
-      const response = await axios.put(apiEndpoint, data);
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
+      const response = await axios.put(URL, data);
       return response.data;
     } catch (error) {
-      console.error('Error updating inquiry:', error.message);
+      console.error('Error updating employee:', error.message);
       throw error;
     }
   }
 
   const onSubmit = async (data) => {
+    const addEmployee = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      contact: data.contact,
+      dob: data.dob,
+      email: data.email,
+      gender: data.gender,
+      role: data.role,
+      qualification: data.qualification,
+      technology: data.technology,
+      experience: data.experience,
+      joining_date: data.joining_date,
+      address: {
+        address_1: data.address.address_1,
+        address_2: data.address.address_2,
+        country: data.address.country,
+        state: data.address.state,
+        city: data.address.city,
+        zipcode: data.address.zipcode,
+      },
+      // avatar_url: data.avatar_url,
+    };
+    console.log("ssss",addEmployee);
     try {
       let response;
       if (employeeId) {
-        response = await UpdateEmployee(employeeId, data);
+        response = await updateEmployee(employeeId, addEmployee);
+        console.log('update', response);
       } else {
-        response = await createEmployee(data);
+        response = await createEmployee(addEmployee);
+        console.log('add', response);
       }
       reset();
       router.push(paths.dashboard.employee.list);
@@ -164,7 +186,6 @@ export default function EmployeeNewEditForm({ employeeId }) {
     }
   };
 
-  // Upload Employee Image
   const handleDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
 
@@ -343,8 +364,8 @@ export default function EmployeeNewEditForm({ employeeId }) {
           {!mdUp && <CardHeader title="Address Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="address_1" label="Address line 1" />
-            <RHFTextField name="address_2" label="Address line 2" />
+            <RHFTextField name="address.address_1" label="Address line 1" />
+            <RHFTextField name="address.address_2" label="Address line 2" />
 
             <Box
               columnGap={2}
@@ -356,7 +377,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
               }}
             >
               <Controller
-                name="country"
+                name="address.country"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
@@ -370,15 +391,15 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 )}
               />
               <Controller
-                name="state"
+                name="address.state"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
                     options={
-                      watch('country')
+                      watch('address.country')
                         ? countrystatecity
-                            .find((country) => country.name === watch('country'))
+                            .find((country) => country.name === watch('address.country'))
                             ?.states.map((state) => state.name) || []
                         : []
                     }
@@ -390,16 +411,16 @@ export default function EmployeeNewEditForm({ employeeId }) {
                 )}
               />
               <Controller
-                name="city"
+                name="address.city"
                 control={control}
                 render={({ field }) => (
                   <Autocomplete
                     {...field}
                     options={
-                      watch('state')
+                      watch('address.state')
                         ? countrystatecity
-                            .find((country) => country.name === watch('country'))
-                            ?.states.find((state) => state.name === watch('state'))
+                            .find((country) => country.name === watch('address.country'))
+                            ?.states.find((state) => state.name === watch('address.state'))
                             ?.cities.map((city) => city.name) || []
                         : []
                     }

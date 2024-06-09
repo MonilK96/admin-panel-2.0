@@ -15,9 +15,6 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import axios from 'axios';
-
-import { isAfter, isBetween } from 'src/utils/format-time';
-
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSnackbar } from 'src/components/snackbar';
@@ -47,7 +44,7 @@ const TABLE_HEAD = [
   { id: 'appointment', label: 'Appointment' },
   { id: 'contact', label: 'Contact', align: 'center' },
   { id: 'email', label: 'Email', align: 'center' },
-  { id: 'demo', label: 'Demo', width: 110,align: 'center'  },
+  { id: 'demo', label: 'Demo', width: 110, align: 'center' },
   { id: '', width: 88 },
 ];
 
@@ -84,11 +81,6 @@ export default function InquiryListView() {
     filters,
   });
 
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
-
   const denseHeight = table.dense ? 56 : 56 + 20;
 
   const canReset =
@@ -107,55 +99,27 @@ export default function InquiryListView() {
     [table]
   );
 
-  const handleDeleteRow = useCallback(
-    async (_id) => {
-      try {
-        const response = await axios.delete(
-          `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${_id}/deleteInquiry`
-        );
-        if (response.status === 200) {
-          enqueueSnackbar(response.data.data.message, { variant: 'success' });
-          confirm.onFalse();
-          mutate();
-        } else {
-          enqueueSnackbar(response.data.message, { variant: 'error' });
-        }
-      } catch (error) {
-        console.error('Failed to delete inquiry', error);
-        enqueueSnackbar('Failed to delete inquiry', { variant: 'error' });
-      }
-    },
-    [enqueueSnackbar, mutate, confirm]
-  );
-
   const handleDeleteRows = useCallback(async () => {
     try {
       const sortedSelectedIds = [...table.selected].sort();
-      const selectedIdsArray = [];
-      await Promise.all(
-        sortedSelectedIds.map(async (selectedId) => {
-          selectedIdsArray.push(selectedId);
-          const response = await axios.delete(
-            `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/delete/all-inquiry`,
-            {
-              data: { ids: selectedIdsArray },
-            }
-          );
-          if (response.status === 200) {
-            console.log('multi delete', response);
-            enqueueSnackbar(response.data.data.message, { variant: 'success' });
-            mutate();
-            confirm.onFalse();
-          } else {
-            enqueueSnackbar(response.data.message, { variant: 'error' });
-          }
-        })
-      );
+      const selectedIds = sortedSelectedIds.map((selectedId) => selectedId);
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry`;
+      const response = await axios.delete(URL, {
+        data: { ids: selectedIds },
+      });
+      if (response.status === 200) {
+        console.log('delete response:', response);
+        enqueueSnackbar(response.data.message, { variant: 'success' });
+        mutate();
+        confirm.onFalse();
+      } else {
+        enqueueSnackbar(response.data.message, { variant: 'error' });
+      }
     } catch (error) {
       console.error('Failed to delete inquiries', error);
       enqueueSnackbar('Failed to delete inquiries', { variant: 'error' });
     }
-  }, [enqueueSnackbar, mutate, confirm, table.selected]);
+  }, [table.selected, enqueueSnackbar, mutate, confirm]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -171,7 +135,7 @@ export default function InquiryListView() {
           heading="Inquiry List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Inquiry', href: paths.dashboard.inquiry.root },
+            { name: 'Inquiry', href: paths.dashboard.inquiry.list },
             { name: 'Inquiry List' },
           ]}
           action={
@@ -242,7 +206,7 @@ export default function InquiryListView() {
                         row={row}
                         selected={table.selected.includes(row._id)}
                         onSelectRow={() => table.onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onDeleteRow={() => handleDeleteRows(row._id, selectedIds)}
                         onEditRow={() => handleEditRow(row._id)}
                       />
                     ))}

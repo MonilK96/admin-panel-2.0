@@ -88,6 +88,11 @@ export function useNavData() {
             path: paths.dashboard.general.file,
             icon: ICONS.file,
           },
+          {
+            title: t('fees'),
+            path: paths.dashboard.general.fees,
+            icon: ICONS.invoice,
+          },
         ],
       },
 
@@ -176,15 +181,11 @@ export function useNavData() {
           },
 
           // SEMINAR
-          {
-            title: t('seminar'),
-            path: paths.dashboard.seminar.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.seminar.list },
-              // { title: t('details'), path: paths.dashboard.demo.demo.details },
-            ],
-          },
+          // {
+          //   title: t('seminar'),
+          //   path: paths.dashboard.seminar.root,
+          //   icon: ICONS.order,
+          // },
 
           // ATTENDANCE
           {
