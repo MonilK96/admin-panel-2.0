@@ -25,8 +25,25 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function FeesTableRow({row, index,  selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { profile_pic , enroll_no , course , student_name , student_email , contact ,joining_date } = row;
+export default function FeesTableRow({
+  row,
+  index,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+}) {
+  const { enrollment_no } = row;
+  const {
+    profile_pic,
+    course,
+    student_name,
+    student_email,
+    contact,
+    joining_date,
+    firstName,
+    lastName,
+  } = row.personal_info;
 
   const confirm = useBoolean();
 
@@ -34,6 +51,32 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
 
   const popover = usePopover();
 
+  const installMent = [
+    {
+      srNo: 1,
+      installMentDate: '23/05/2024',
+      installMentAmount: '11000',
+      paymentDate: '23/05/2024',
+      dewDate: '23/05/2024',
+      mode: 'Cash',
+    },
+    {
+      srNo: 1,
+      installMentDate: '23/05/2024',
+      installMentAmount: '11000',
+      paymentDate: '23/05/2024',
+      dewDate: '23/05/2024',
+      mode: 'Cash',
+    },
+    {
+      srNo: 1,
+      installMentDate: '23/05/2024',
+      installMentAmount: '11000',
+      paymentDate: '23/05/2024',
+      dewDate: '23/05/2024',
+      mode: 'Cash',
+    },
+  ];
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -56,11 +99,7 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar
-          alt="error"
-          src={profile_pic}
-          sx={{ mr: 2 }}
-        />
+        <Avatar alt="error" src={profile_pic} sx={{ mr: 2 }} />
 
         <ListItemText
           primary={student_name}
@@ -75,7 +114,7 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
 
       <TableCell>
         <ListItemText
-          primary={enroll_no}
+          primary={enrollment_no}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -83,6 +122,18 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
             typography: 'caption',
           }}
         />
+      </TableCell>
+
+      <TableCell align="center">
+        {' '}
+        <ListItemText
+          primary={firstName + ' ' + lastName}
+          primaryTypographyProps={{ typography: 'body2' }}
+          secondaryTypographyProps={{
+            component: 'span',
+            color: 'text.disabled',
+          }}
+        />{' '}
       </TableCell>
 
       <TableCell align="center">
@@ -99,7 +150,7 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
 
       <TableCell>
         <ListItemText
-          primary={joining_date}
+          primary={fDate(joining_date)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -154,7 +205,7 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
 
   const renderSecondary = (
     <TableRow>
-      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+      <TableCell sx={{ p: 0, border: 'none' }} colSpan={9}>
         <Collapse
           in={collapse.value}
           timeout="auto"
@@ -162,42 +213,39 @@ export default function FeesTableRow({row, index,  selected, onViewRow, onSelect
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {/* {items.map((item) => (
+            {installMent.map((item, index) => (
               <Stack
-                key={item.id}
+                key={item.seNo}
                 direction="row"
                 alignItems="center"
                 sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
                   p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
                   '&:not(:last-of-type)': {
                     borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
                   },
                 }}
               >
-                <Avatar
-                  src={item.coverUrl}
-                  variant="rounded"
-                  sx={{ width: 48, height: 48, mr: 2 }}
-                />
-
-                <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
-                  primaryTypographyProps={{
-                    typography: 'body2',
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
                   }}
-                  secondaryTypographyProps={{
-                    component: 'span',
-                    color: 'text.disabled',
-                    mt: 0.5,
-                  }}
-                />
+                >
+                  {index + 1}
+                </Box>
 
-                <Box>x{item.quantity}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.installMentDate}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.installMentAmount}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.paymentDate}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.dewDate}</Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.mode}</Box>
               </Stack>
-            ))} */}
+            ))}
           </Stack>
         </Collapse>
       </TableCell>

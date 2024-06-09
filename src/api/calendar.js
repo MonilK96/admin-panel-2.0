@@ -35,8 +35,8 @@ export function useGetEvents() {
 }
 
 export function useGetCalendar(page, limit) {
-   const URL = 'https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/event';
-   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+   const calendarURL = 'https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/event';
+   const { data, isLoading, error, isValidating } = useSWR(calendarURL, fetcher);
    const memoizedValue = useMemo(
      () => ({
        calendar: data || [],

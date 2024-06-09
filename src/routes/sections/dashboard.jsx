@@ -1,10 +1,12 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { AuthGuard } from 'src/auth/guard';
 import DashboardLayout from 'src/layouts/dashboard';
 
+import { AuthGuard } from 'src/auth/guard';
 import { LoadingScreen } from 'src/components/loading-screen';
+
+
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +18,12 @@ const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
 const FeesPage = lazy(() => import('src/pages/dashboard/fees'));
+
+// Inquiry
+const InquiryListPage = lazy(() => import('src/pages/dashboard/inquiry/list'));
+const InquiryCreatePage = lazy(() => import('src/pages/dashboard/inquiry/new'));
+const InquiryEditPage = lazy(() => import('src/pages/dashboard/inquiry/edit'));
+
 // PRODUCT
 const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/details'));
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
@@ -24,6 +32,12 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 // ORDER
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
+// DEMO
+const DemoListPage = lazy(() => import('src/pages/dashboard/demo/list'));
+// SEMINAR
+const SeminarListPage = lazy(() => import('src/pages/dashboard/seminar/list'));
+// ATTENDANCE
+const AttendanceListPage = lazy(() => import('src/pages/dashboard/attendance/list'));
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
@@ -36,6 +50,12 @@ const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
 const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
+// STUDENT
+const StudentProfilePage = lazy(() => import('src/pages/dashboard/student/profile'));
+const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
+const StudentAccountPage = lazy(() => import('src/pages/dashboard/student/account'));
+const StudentCreatePage = lazy(() => import('src/pages/dashboard/student/new'));
+const StudentEditPage = lazy(() => import('src/pages/dashboard/student/edit'));
 // EMPLOYEE
 const EmployeeProfilePage = lazy(() => import('src/pages/dashboard/employee/profile'));
 const EmployeeCardsPage = lazy(() => import('src/pages/dashboard/employee/cards'));
@@ -103,7 +123,28 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <UserEditPage /> },
           { path: 'account', element: <UserAccountPage /> },
         ],
-      },{
+      },
+      {
+        path: 'inquiry',
+        children: [
+          { element: <InquiryListPage />, index: true },
+          { path: 'list', element: <InquiryListPage /> },
+          { path: 'new', element: <InquiryCreatePage /> },
+          { path: 'edit', element: <InquiryEditPage /> },
+        ],
+      },
+      {
+        path: 'student',
+        children: [
+          { element: <StudentProfilePage />, index: true },
+          { path: 'profile', element: <StudentProfilePage /> },
+          { path: 'list', element: <StudentListPage /> },
+          { path: 'new', element: <StudentCreatePage /> },
+          { path: ':id/edit', element: <StudentEditPage /> },
+          { path: 'account', element: <StudentAccountPage /> },
+        ],
+      },
+      {
         path: 'employee',
         children: [
           { element: <EmployeeProfilePage />, index: true },
@@ -131,6 +172,30 @@ export const dashboardRoutes = [
           { element: <OrderListPage />, index: true },
           { path: 'list', element: <OrderListPage /> },
           { path: ':id', element: <OrderDetailsPage /> },
+        ],
+      },
+      {
+        path: 'demo',
+        children: [
+          { element: <DemoListPage />, index: true },
+          { path: 'list', element: <DemoListPage /> },
+          // { path: ':id', element: <DemoDetailsPage /> },
+        ],
+      },
+      {
+        path: 'seminar',
+        children: [
+          { element: <SeminarListPage />, index: true },
+          { path: 'list', element: <SeminarListPage /> },
+          // { path: ':id', element: <DemoDetailsPage /> },
+        ],
+      },
+      {
+        path: 'attendance',
+        children: [
+          { element: <AttendanceListPage />, index: true },
+          { path: 'list', element: <AttendanceListPage /> },
+          // { path: ':id', element: <DemoDetailsPage /> },
         ],
       },
       {

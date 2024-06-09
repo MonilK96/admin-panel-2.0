@@ -66,22 +66,34 @@ export default function CalendarView() {
       // lastName: 'Kakadiya',
       // color: 'blue',
       // textColor: 'blue',
-
+      id: '0000000000',
+      student: 'darshil thummari',
       event: 'gothan chholano',
-      startDate: 1718003577806,
-      endDate: 1718176857806,
+      startDate: 'Wed Jun 10 2024 17:49:45 GMT+0530 (India Standard Time)',
+      endDate: 'Wed Jun 12 2024 17:49:45 GMT+0530 (India Standard Time)',
       leave_type: 'festival holiday',
       leave_description: 'gothan cholavathi eja pohachi che raja aapava namra vinanti',
       leave_status: 'Pending',
     },
     {
-      startDate: Date(),
-      endDate: Date(),
+      id: '1111111111',
+      student: 'Sujal magadal',
+      startDate: 'Wed Jun 05 2024 17:49:45 GMT+0530 (India Standard Time)',
+      endDate: 'Wed Jun 06 2024 17:49:45 GMT+0530 (India Standard Time)',
       event: 'Test Event 2',
       leave_description: 'Description 2',
       leave_status: 'Pending',
       leave_type: 'other',
-      student: 'Student Name 2',
+    },
+    {
+      id: '2222222222',
+      student: 'heet timli',
+      startDate: 'Wed Jun 07 2024 17:49:45 GMT+0530 (India Standard Time)',
+      endDate: 'Wed Jun 08 2024 17:49:45 GMT+0530 (India Standard Time)',
+      event: 'Test Event 3',
+      leave_description: 'Description 2',
+      leave_status: 'Pending',
+      leave_type: 'Sick leave',
     },
   ];
 
@@ -102,6 +114,7 @@ export default function CalendarView() {
     'festival holiday': 'blue',
     'Student Leave': 'yellow',
     'recaption leave': 'brown',
+    'Sick leave': 'brown',
     'other': 'red',
   };
   const transformedDummyLeave = dummyLeave.map((event) => ({
@@ -135,8 +148,7 @@ export default function CalendarView() {
     selectedRange,
     onClickEventInFilters,
   } = useCalendar();
-  console.log("eve : ",dummyLeave);
-  const currentEvent = useEvent(events, selectEventId, selectedRange, openForm);
+  const currentEvent = useEvent(dummyLeave, selectEventId, selectedRange, openForm);
 
   useEffect(() => {
     onInitialView();
@@ -163,9 +175,7 @@ export default function CalendarView() {
 
   const renderEventContent = (eventInfo) => {
     return (
-      <Box
-        sx={{ height: "14px", fontSize: '12px', fontWeight: "600", alignSelf: "center" }}
-      >
+      <Box sx={{ height: '14px', fontSize: '12px', fontWeight: '600', alignSelf: 'center' }}>
         {eventInfo.event.title}
       </Box>
     );
@@ -253,7 +263,6 @@ export default function CalendarView() {
           </StyledCalendar>
         </Card>
       </Container>
-              {console.log("CE : ",currentEvent)}
       <Dialog
         fullWidth
         maxWidth="xs"
@@ -265,7 +274,7 @@ export default function CalendarView() {
         }}
       >
         <DialogTitle sx={{ minHeight: 76 }}>
-          {openForm && <> {currentEvent ? 'Edit Event' : 'Add Event'}</>}
+          {openForm && <> {currentEvent.event !== '' ? 'Edit Event' : 'Add Event'}</>}
         </DialogTitle>
 
         <CalendarForm

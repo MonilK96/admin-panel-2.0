@@ -36,6 +36,7 @@ const ICONS = {
   booking: icon('ic_booking'),
   invoice: icon('ic_invoice'),
   product: icon('ic_product'),
+  inquiry: icon('ic_label'),
   calendar: icon('ic_calendar'),
   disabled: icon('ic_disabled'),
   external: icon('ic_external'),
@@ -114,19 +115,35 @@ export function useNavData() {
               { title: t('account'), path: paths.dashboard.user.account },
             ],
           },
+          // STUDENT
+          {
+            title: t('student'),
+            path: paths.dashboard.student.root,
+            icon: ICONS.user,
+            children: [
+              { title: t('profile'), path: paths.dashboard.student.root },
+              { title: t('list'), path: paths.dashboard.student.list },
+              { title: t('create'), path: paths.dashboard.student.new },
+              { title: t('edit'), path: paths.dashboard.student.demo.edit },
+              { title: t('account'), path: paths.dashboard.student.account },
+            ],
+          },
 
           // EMPLOYEE
           {
             title: t('employee'),
-            path: paths.dashboard.employee.root,
+            path: paths.dashboard.employee.list,
             icon: ICONS.user,
+          },
+
+          {
+            title: t('inquiry'),
+            path: paths.dashboard.inquiry.root,
+            icon: ICONS.inquiry,
             children: [
-              { title: t('profile'), path: paths.dashboard.employee.root },
-              { title: t('cards'), path: paths.dashboard.employee.cards },
-              { title: t('list'), path: paths.dashboard.employee.list },
-              { title: t('create'), path: paths.dashboard.employee.new },
-              { title: t('edit'), path: paths.dashboard.employee.demo.edit },
-              { title: t('account'), path: paths.dashboard.employee.account },
+              { title: t('list'), path: paths.dashboard.inquiry.root },
+              { title: t('create'), path: paths.dashboard.inquiry.new },
+              { title: t('edit'), path: paths.dashboard.inquiry.edit },
             ],
           },
 
@@ -154,6 +171,39 @@ export function useNavData() {
             children: [
               { title: t('list'), path: paths.dashboard.order.root },
               { title: t('details'), path: paths.dashboard.order.demo.details },
+            ],
+          },
+
+          // DEMO
+          {
+            title: t('Demo'),
+            path: paths.dashboard.demo.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.demo.root },
+              // { title: t('details'), path: paths.dashboard.demo.demo.details },
+            ],
+          },
+
+          // SEMINAR
+          {
+            title: t('seminar'),
+            path: paths.dashboard.seminar.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.seminar.list },
+              // { title: t('details'), path: paths.dashboard.demo.demo.details },
+            ],
+          },
+
+          // ATTENDANCE
+          {
+            title: t('attendance'),
+            path: paths.dashboard.attendance.root,
+            icon: ICONS.order,
+            children: [
+              { title: t('list'), path: paths.dashboard.attendance.root },
+              // { title: t('details'), path: paths.dashboard.attendance.demo.details },
             ],
           },
 

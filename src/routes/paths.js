@@ -127,6 +127,23 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
       },
     },
+    inquiry: {
+      root: `${ROOTS.DASHBOARD}/inquiry`,
+      new: `${ROOTS.DASHBOARD}/inquiry/new`,
+      list: `${ROOTS.DASHBOARD}/inquiry/list`,
+      edit: `${ROOTS.DASHBOARD}/inquiry/edit`,
+    },
+    student: {
+      root: `${ROOTS.DASHBOARD}/student`,
+      new: `${ROOTS.DASHBOARD}/student/new`,
+      list: `${ROOTS.DASHBOARD}/student/list`,
+      profile: `${ROOTS.DASHBOARD}/student/profile`,
+      account: `${ROOTS.DASHBOARD}/student/account`,
+      edit: (id) => `${ROOTS.DASHBOARD}/student/${id}/edit`,
+      demo: {
+        edit: `${ROOTS.DASHBOARD}/student/${MOCK_ID}/edit`,
+      },
+    },
     employee: {
       root: `${ROOTS.DASHBOARD}/employee`,
       new: `${ROOTS.DASHBOARD}/employee/new`,
@@ -175,6 +192,28 @@ export const paths = {
       demo: {
         details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
       },
+    },
+    demo: {
+      root: `${ROOTS.DASHBOARD}/demo`,
+      // details: (id) => `${ROOTS.DASHBOARD}/demo/${id}`,
+      // demo: {
+      //   details: `${ROOTS.DASHBOARD}/demo/${MOCK_ID}`,
+      // },
+    },
+    seminar: {  
+      root: `${ROOTS.DASHBOARD}/seminar`,
+      list: `${ROOTS.DASHBOARD}/seminar/list`,
+      // details: (id) => `${ROOTS.DASHBOARD}/seminar/${id}`,
+      // seminar: {
+      //   details: `${ROOTS.DASHBOARD}/seminar/${MOCK_ID}`,
+      // },
+    },
+    attendance: {
+      root: `${ROOTS.DASHBOARD}/attendance`,
+      // details: (id) => `${ROOTS.DASHBOARD}/attendance/${id}`,
+      // demo: {
+      // details: `${ROOTS.DASHBOARD}/attendance/${MOCK_ID}`,
+      // },
     },
     job: {
       root: `${ROOTS.DASHBOARD}/job`,

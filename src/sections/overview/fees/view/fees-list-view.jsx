@@ -42,21 +42,21 @@ import {
 import FeesTableFiltersResult from '../fees-table-filters-result';
 import FeesTableRow from '../fees-table-row';
 import FeesTableToolbar from '../fees-table-toolbar';
+import { useGetStudents } from 'src/api/student';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Sr No', width: 116 },
-  { id: 'name', label: 'Profile', width: 126 },
-  { id: 'createdAt', label: 'Enroll No', width: 116 },
-  // { id: 'totalQuantity', label: 'Student Name', width: 120, align: 'center' },
-  { id: 'course', label: 'Course', width: 140 },
-  { id: 'joining_date', label: 'Joining Date', width: 110 },
-  { id: 'conatact', label: 'Contact', width: 110 },
-  // { id: 'status', label: 'Status', width: 110 },
-  { id: '', label: '', width: 60 },
+  { id: 'orderNumber', label: 'Sr No' },
+  { id: 'name', label: 'Profile' },
+  { id: 'createdAt', label: 'Enroll No' },
+  { id: 'studentName', label: 'Student Name' },
+  { id: 'course', label: 'Course' },
+  { id: 'joining_date', label: 'Joining Date' },
+  { id: 'conatact', label: 'Contact' },
+  { id: '', label: '' },
 ];
 
 const defaultFilters = {
@@ -71,7 +71,7 @@ const defaultFilters = {
 export default function FeesListView() {
   const { enqueueSnackbar } = useSnackbar();
 
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
+  const table = useTable({ defaultOrderBy: 'feesNumber' });
 
   const settings = useSettingsContext();
 
@@ -79,6 +79,7 @@ export default function FeesListView() {
 
   const confirm = useBoolean();
 
+  const { students } = useGetStudents();
   const dummyData = [
     {
       profile_pic: 'https://api-dev-minimal-v510.vercel.app/assets/images/avatar/avatar_1.jpg',
@@ -91,14 +92,14 @@ export default function FeesListView() {
     },
   ];
 
-  const [tableData, setTableData] = useState(dummyData);
+  const [tableData, setTableData] = useState(students);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: students,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -170,10 +171,9 @@ export default function FeesListView() {
     },
     [handleFilters]
   );
-
+    console.log("tabel : ",table);
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Fees"
           links={[
@@ -228,12 +228,7 @@ export default function FeesListView() {
             ))}
           </Tabs>
 
-          <FeesTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            
-            dateError={dateError}
-          />
+          <FeesTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
 
           {canReset && (
             <FeesTableFiltersResult
@@ -290,9 +285,9 @@ export default function FeesListView() {
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row,index) => (
+                    .map((row, index) => (
                       <FeesTableRow
-                      index={index}
+                        index={index}
                         key={row.id}
                         row={row}
                         selected={table.selected.includes(row.id)}
@@ -324,7 +319,6 @@ export default function FeesListView() {
             onChangeDense={table.onChangeDense}
           />
         </Card>
-      </Container>
 
       <ConfirmDialog
         open={confirm.value}
@@ -369,10 +363,11 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (name) {
     inputData = inputData.filter(
-      (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      ({personal_info}) =>
+        // console.log("or : ",personal_info),
+        personal_info.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        personal_info.lastName.toLowerCase().indexOf(name.toLowerCase()) !== -1 
+        // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
