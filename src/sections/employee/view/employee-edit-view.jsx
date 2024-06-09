@@ -14,8 +14,6 @@ import EmployeeNewEditForm from '../employee-new-edit-form';
 export default function EmployeeEditView({ id }) {
   const settings = useSettingsContext();
 
-  const currentUser = {};
-
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
@@ -29,14 +27,14 @@ export default function EmployeeEditView({ id }) {
             name: 'Employee',
             href: paths.dashboard.employee.list,
           },
-          { name: currentUser?.name },
+          { name: 'Employee Edit'},
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <EmployeeNewEditForm currentUser={currentUser} />
+      <EmployeeNewEditForm employeeId={id} />
     </Container>
   );
 }

@@ -1,11 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 
-import  InquiryEditView  from 'src/sections/inquiry/inquiry-new-edit-form';
+import { useParams } from 'src/routes/hooks';
+
+import  {InquiryEditView}  from 'src/sections/inquiry/view';
 
 
 // ----------------------------------------------------------------------
 
 export default function InquiryEditPage() {
+  
+  const params=useParams();
+  const {id}=params;
 
 
   return (
@@ -13,8 +18,8 @@ export default function InquiryEditPage() {
       <Helmet>
         <title> Dashboard: Inquiry Edit</title>
       </Helmet>
-
-      <InquiryEditView />
+      
+      <InquiryEditView  id={`${id}`}/>
     </>
   );
 }

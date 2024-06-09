@@ -140,11 +140,6 @@ export function useNavData() {
             title: t('inquiry'),
             path: paths.dashboard.inquiry.root,
             icon: ICONS.inquiry,
-            children: [
-              { title: t('list'), path: paths.dashboard.inquiry.root },
-              { title: t('create'), path: paths.dashboard.inquiry.new },
-              { title: t('edit'), path: paths.dashboard.inquiry.edit },
-            ],
           },
 
           // PRODUCT
@@ -186,15 +181,11 @@ export function useNavData() {
           },
 
           // SEMINAR
-          {
-            title: t('seminar'),
-            path: paths.dashboard.seminar.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.seminar.list },
-              // { title: t('details'), path: paths.dashboard.demo.demo.details },
-            ],
-          },
+          // {
+          //   title: t('seminar'),
+          //   path: paths.dashboard.seminar.root,
+          //   icon: ICONS.order,
+          // },
 
           // ATTENDANCE
           {

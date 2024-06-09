@@ -77,7 +77,7 @@ export default function StudentListView() {
 
   const confirm = useBoolean();
 
-  const {students} = useGetStudents();
+  const { students } = useGetStudents();
 
   const [tableData, setTableData] = useState(students);
 
@@ -144,6 +144,13 @@ export default function StudentListView() {
   const handleEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.student.edit(id));
+    },
+    [router]
+  );
+  
+  const handleGuardianEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.student.guaridiandetails(id));
     },
     [router]
   );
@@ -286,6 +293,7 @@ export default function StudentListView() {
                         onSelectRow={() => table.onSelectRow(row._id)}
                         onDeleteRow={() => handleDeleteRow(row._id)}
                         onEditRow={() => handleEditRow(row._id)}
+                        onGuardianRow={() => handleGuardianEditRow(row._id)}
                       />
                     ))}
 

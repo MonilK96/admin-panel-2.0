@@ -1,57 +1,48 @@
 import * as Yup from 'yup';
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import MenuItem from '@mui/material/MenuItem';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-
-import { countries } from 'src/assets/data';
-import { USER_STATUS_OPTIONS } from 'src/_mock';
-
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import Stack from '@mui/system/Stack';
+import axios from 'axios';
+import { useGetEmployees } from 'src/api/employee';
+import { TextField } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export default function EmployeeQuickEditForm({ currentUser, open, onClose }) {
-  const { enqueueSnackbar } = useSnackbar();
+export default function EmployeeQuickEditForm({ currentEmployee, open, onClose }) {
+  const { mutate } = useGetEmployees();
 
+  const { enqueueSnackbar } = useSnackbar();
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
+    firstName: Yup.string().required('Firstname is required'),
+    lastName: Yup.string().required('Lastname is required'),
+    contact: Yup.string().required('Phone number is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      firstName: currentEmployee?.firstName || '',
+      lastName: currentEmployee?.lastName || '',
+      email: currentEmployee?.email || '',
+      contact: currentEmployee?.contact || '',
+      technology: currentEmployee?.technology || '',
+      role: currentEmployee?.role || '',
+      dob: currentEmployee?.dob ? new Date(currentEmployee?.dob) : null,
+      joining_date: currentEmployee?.joining_date ? new Date(currentEmployee?.joining_date) : null,
     }),
-    [currentUser]
+    [currentEmployee]
   );
 
   const methods = useForm({
@@ -61,80 +52,99 @@ export default function EmployeeQuickEditForm({ currentUser, open, onClose }) {
 
   const {
     reset,
+    control,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/${currentEmployee._id}/updateEmployee`;
+      const response = axios.put(URL, data);
+      console.log(response);
       reset();
       onClose();
-      enqueueSnackbar('Update success!');
-      console.info('DATA', data);
+      mutate();
+      enqueueSnackbar('Employee Edit Successfully', { variant: 'success' });
     } catch (error) {
-      console.error(error);
+      console.error('error', error);
+      enqueueSnackbar(error.response?.data?.message, { variant: 'error' });
     }
-  });
+  };
 
   return (
     <Dialog
       fullWidth
-      maxWidth={false}
+      maxWidth="md"
       open={open}
       onClose={onClose}
       PaperProps={{
         sx: { maxWidth: 720 },
       }}
     >
-      <FormProvider methods={methods} onSubmit={onSubmit}>
-        <DialogTitle>Quick Update</DialogTitle>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle sx={{ textAlign: 'center' }}>Quick Update</DialogTitle>
 
         <DialogContent>
-          <Alert variant="outlined" severity="info" sx={{ mb: 3 }}>
-            Account is waiting for confirmation
-          </Alert>
+          <Stack spacing={3} sx={{ p: 3 }}>
+            <Box
+              columnGap={2}
+              rowGap={3}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                md: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextField name="firstName" label="First Name" />
+              <RHFTextField name="lastName" label="Last Name" />
+              <RHFTextField name="email" label="Email Address" />
+              <RHFTextField name="contact" label="Phone Number" />
+              <RHFTextField name="technology" label="Technology" />
+              <RHFTextField name="role" label="Role" />
+              <Stack spacing={1.5}>
+                <Controller
+                  name="dob"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <DatePicker
+                      {...field}
+                      label="Date of Birth"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          error={!!error}
+                          helperText={error ? error.message : ''}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Stack>
 
-          <Box
-            rowGap={3}
-            columnGap={2}
-            display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-            }}
-          >
-            <RHFSelect name="status" label="Status">
-              {USER_STATUS_OPTIONS.map((status) => (
-                <MenuItem key={status.value} value={status.value}>
-                  {status.label}
-                </MenuItem>
-              ))}
-            </RHFSelect>
-
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
-
-            <RHFTextField name="name" label="Full Name" />
-            <RHFTextField name="email" label="Email Address" />
-            <RHFTextField name="phoneNumber" label="Phone Number" />
-
-            <RHFAutocomplete
-              name="country"
-              type="country"
-              label="Country"
-              placeholder="Choose a country"
-              fullWidth
-              options={countries.map((option) => option.label)}
-              getOptionLabel={(option) => option}
-            />
-
-            <RHFTextField name="state" label="State/Region" />
-            <RHFTextField name="city" label="City" />
-            <RHFTextField name="address" label="Address" />
-            <RHFTextField name="zipCode" label="Zip/Code" />
-            <RHFTextField name="company" label="Company" />
-            <RHFTextField name="role" label="Role" />
-          </Box>
+              <Stack spacing={1.5}>
+                <Controller
+                  name="joining_date"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <DatePicker
+                      {...field}
+                      label="Joining Date"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          error={!!error}
+                          helperText={error ? error.message : ''}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Stack>
+            </Box>
+          </Stack>
         </DialogContent>
 
         <DialogActions>
@@ -154,5 +164,5 @@ export default function EmployeeQuickEditForm({ currentUser, open, onClose }) {
 EmployeeQuickEditForm.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
-  currentUser: PropTypes.object,
+  currentEmployee: PropTypes.object,
 };

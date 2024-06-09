@@ -1,23 +1,31 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import {  fetcher } from '../utils/axios';
+import { useAuthContext } from 'src/auth/hooks';
 
-export function useGetEmployees(page, limit) {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/employee`;
+import { fetcher } from '../utils/axios';
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+export function useGetEmployees() {
+  const { user } = useAuthContext();
+
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/employee`;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
 
   const memoizedValue = useMemo(
     () => ({
-      employees: data?.data?.employees || [],
+      employees: data?.data || [],
       employeesLoading: isLoading,
       employeesError: error,
       employeesValidating: isValidating,
-      employeesEmpty: !isLoading && !data?.data?.employees.length,
+      employeesEmpty: !isLoading && !data.data.length,
+      mutate,
     }),
-    [data?.data?.employees, error, isLoading, isValidating]
+    [data?.data, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;
 }
+

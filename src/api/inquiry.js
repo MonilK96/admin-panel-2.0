@@ -1,25 +1,28 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
-
 import { fetcher } from 'src/utils/axios';
-
-// ----------------------------------------------------------------------
+import { useAuthContext } from 'src/auth/hooks';
 
 export function useGetInquiry() {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec61d671bf9a7f53664b5/inquiry`;
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+  const { user } = useAuthContext();
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/inquiry`;
+  const { data, error, isValidating, mutate } = useSWR(URL, fetcher);
+  if (error) {
+    console.error('Error fetching data:', error);
+  }
 
-  const memoizedValue = useMemo(
-    () => ({
-      inquiry: data?.data?.inquiry || [],
+  const memoizedValue = useMemo(() => {
+    const inquiry = data?.data || [];
+    const isLoading = !data && !error;
+    return {
+      inquiry,
       inquiryLoading: isLoading,
       inquiryError: error,
       inquiryValidating: isValidating,
-      inquiryEmpty: !isLoading && !data?.data?.inquiry.length,
-      mutate, 
-    }),
-    [data?.data?.inquiry, error, isLoading, isValidating, mutate]
-  );
+      inquiryEmpty: !isLoading && inquiry.length === 0,
+      mutate,
+    };
+  }, [data, error, isValidating, mutate]);
 
   return memoizedValue;
 }

@@ -1,39 +1,25 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-
 import Container from '@mui/material/Container';
-
-import { paths } from 'src/routes/paths';
-
-import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-
+import { paths } from 'src/routes/paths';
 import InquiryNewEditForm from '../inquiry-new-edit-form';
 
 export default function InquiryEditView({ id }) {
-  const settings = useSettingsContext();
-
-
+  
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <Container maxWidth="lg">
       <CustomBreadcrumbs
         heading="Edit"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Inquiry',
-            href: paths.dashboard.inquiry.root,
-          },
-        //   { name: currentUser?.name },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Inquiry', href: paths.dashboard.inquiry.list },
+          { name: 'Inquiry Edit'},
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <InquiryNewEditForm  />
+      <InquiryNewEditForm inquiryId={id} />
     </Container>
   );
 }

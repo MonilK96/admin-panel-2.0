@@ -127,11 +127,14 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
       },
     },
+    profile: {
+      root: `${ROOTS.DASHBOARD}/profile`,
+    },
     inquiry: {
       root: `${ROOTS.DASHBOARD}/inquiry`,
       new: `${ROOTS.DASHBOARD}/inquiry/new`,
       list: `${ROOTS.DASHBOARD}/inquiry/list`,
-      edit: `${ROOTS.DASHBOARD}/inquiry/edit`,
+      edit: (id) => `${ROOTS.DASHBOARD}/inquiry/${id}/edit`,
     },
     student: {
       root: `${ROOTS.DASHBOARD}/student`,
@@ -140,8 +143,11 @@ export const paths = {
       profile: `${ROOTS.DASHBOARD}/student/profile`,
       account: `${ROOTS.DASHBOARD}/student/account`,
       edit: (id) => `${ROOTS.DASHBOARD}/student/${id}/edit`,
+      view: (id) => `${ROOTS.DASHBOARD}/student/${id}`,
+      guaridiandetails: (id) => `${ROOTS.DASHBOARD}/student/${id}/guaridiandetails`,
       demo: {
         edit: `${ROOTS.DASHBOARD}/student/${MOCK_ID}/edit`,
+        view: `${ROOTS.DASHBOARD}/student/${MOCK_ID}`,
       },
     },
     employee: {
@@ -156,6 +162,12 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/employee/${MOCK_ID}/edit`,
       },
     },
+    expenses: {
+      root: `${ROOTS.DASHBOARD}/expenses`,
+      list: `${ROOTS.DASHBOARD}/expenses/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/expenses/${id}/edit`,
+      new: `${ROOTS.DASHBOARD}/expenses/new`,
+    },
     product: {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
@@ -166,6 +178,12 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
       },
     },
+    // seminar: {
+    //   root: `${ROOTS.DASHBOARD}/seminar`,
+    //   new: `${ROOTS.DASHBOARD}/seminar`,
+    //   list: `${ROOTS.DASHBOARD}/seminar/list`,
+    //   edit: `${ROOTS.DASHBOARD}/seminar/edit`,
+    // },
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,
       new: `${ROOTS.DASHBOARD}/invoice/new`,
@@ -193,6 +211,17 @@ export const paths = {
         details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
       },
     },
+
+    // batches
+    batches: {
+      root: `${ROOTS.DASHBOARD}/batches`,
+      details: (id) => `${ROOTS.DASHBOARD}/batches/${id}`,
+      demo: {
+        details: `${ROOTS.DASHBOARD}/batches/${MOCK_ID}`,
+      },
+      new: `${ROOTS.DASHBOARD}/batches/new`,
+    },
+
     demo: {
       root: `${ROOTS.DASHBOARD}/demo`,
       // details: (id) => `${ROOTS.DASHBOARD}/demo/${id}`,
@@ -200,7 +229,7 @@ export const paths = {
       //   details: `${ROOTS.DASHBOARD}/demo/${MOCK_ID}`,
       // },
     },
-    seminar: {  
+    seminar: {
       root: `${ROOTS.DASHBOARD}/seminar`,
       list: `${ROOTS.DASHBOARD}/seminar/list`,
       // details: (id) => `${ROOTS.DASHBOARD}/seminar/${id}`,
