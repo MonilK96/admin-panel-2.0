@@ -485,7 +485,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
-  });
+  }); 
 
   inputData = stabilizedThis.map((el) => el[0]);
 

@@ -130,7 +130,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/inquiry`,
       new: `${ROOTS.DASHBOARD}/inquiry/new`,
       list: `${ROOTS.DASHBOARD}/inquiry/list`,
-      edit:(id)=> `${ROOTS.DASHBOARD}/inquiry/${id}/edit`,
+      edit: (id) => `${ROOTS.DASHBOARD}/inquiry/${id}/edit`,
       demo: {
         edit: `${ROOTS.DASHBOARD}/inquiry/${MOCK_ID}/edit`,
       },

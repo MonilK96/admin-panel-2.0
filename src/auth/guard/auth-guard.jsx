@@ -21,7 +21,7 @@ const loginPaths = {
 // ----------------------------------------------------------------------
 
 export default function AuthGuard({ children }) {
-     /* eslint-disable */
+  /* eslint-disable */
   const { loading } = useAuthContext();
 
   return <> {children}</>;

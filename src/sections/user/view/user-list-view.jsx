@@ -150,7 +150,6 @@ export default function UserListView() {
     },
     [handleFilters]
   );
-
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
