@@ -175,7 +175,7 @@ export default function StudentListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.user.new}
+              href={paths.dashboard.student.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

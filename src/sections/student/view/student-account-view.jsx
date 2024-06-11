@@ -14,8 +14,6 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import StudentAccountGeneral from '../student-account-general';
 import StudentAccountBilling from '../student-account-billing';
-import StudentAccountSocialLinks from '../student-account-social-links';
-import StudentAccountNotifications from '../student-account-notifications';
 import StudentAccountChangePassword from '../student-account-change-password';
 import StudentAccountBillingHistory from '../student-account-billing-history';
 import StudentAttendanceListView from './student-attendance-list-view';
@@ -80,7 +78,6 @@ export default function StudentAccountView() {
         heading="Account"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
           { name: 'Account' },
         ]}
         sx={{

@@ -52,8 +52,7 @@ const TABS = [
 export default function UserProfileView() {
   const settings = useSettingsContext();
 
-  const {user}  = useAuthContext();
-  console.log(user,"uuuu");
+  const { user } = useAuthContext();
 
   const [searchFriends, setSearchFriends] = useState('');
 

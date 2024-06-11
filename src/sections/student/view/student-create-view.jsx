@@ -23,7 +23,7 @@ export default function StudentCreateView() {
           },
           {
             name: 'User',
-            href: paths.dashboard.user.root,
+            href: paths.dashboard.student.root,
           },
           { name: 'New user' },
         ]}
