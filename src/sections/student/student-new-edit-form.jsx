@@ -38,44 +38,38 @@ export default function StudentNewEditForm({ currentUser }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
+    firstName: Yup.string().required('First Name is required'),
+    lastName: Yup.string().required('Last Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+    contact: Yup.string().required('Contact is required'),
+    gender: Yup.string().required('Gender is required'),
+    course: Yup.string().required('Course is required'),
+    dob: Yup.date().required('Date of Birth is required'),
+    joining_date: Yup.date().required('Joining Date is required'),
+    enrollment_no: Yup.string().required('Enrollment Number is required'),
   });
-
-  const defaultValues = useMemo(
-    () => ({
-      name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
-      status: currentUser?.status || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
-    }),
-    [currentUser]
-  );
 
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
-    defaultValues,
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      contact: '',
+      email: '',
+      gender: '',
+      course: '',
+      education: '',
+      college: '',
+      dob: '',
+      joining_date: '',
+      enrollment_no: '',
+      blood_group: '',
+      address_1: '',
+      address_2: '',
+      country: '',
+      state: '',
+      city: '',
+    },
   });
 
   const {

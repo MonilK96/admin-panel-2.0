@@ -7,6 +7,7 @@ import Tabs, { tabsClasses } from '@mui/material/Tabs';
 
 import { paths } from 'src/routes/paths';
 
+
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 
 import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
@@ -14,12 +15,12 @@ import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } fr
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import ProfileCover from 'src/sections/employee/profile-cover';
+import ProfileHome from 'src/sections/employee/profile-home';
+import ProfileFollowers from 'src/sections/employee/profile-followers';
+import ProfileFriends from 'src/sections/employee/profile-friends';
+import ProfileGallery from 'src/sections/employee/profile-gallery';
 
-import ProfileHome from '../profile-home';
-import ProfileCover from '../profile-cover';
-import ProfileFriends from '../profile-friends';
-import ProfileGallery from '../profile-gallery';
-import ProfileFollowers from '../profile-followers';
 
 // ----------------------------------------------------------------------
 

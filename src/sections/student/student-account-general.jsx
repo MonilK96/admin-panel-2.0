@@ -8,103 +8,110 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { useMockedUser } from 'src/hooks/use-mocked-user';
-
-import { fData } from 'src/utils/format-number';
-
-import { countries } from 'src/assets/data';
-
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
-  RHFSwitch,
   RHFTextField,
   RHFUploadAvatar,
   RHFAutocomplete,
 } from 'src/components/hook-form';
 import { DatePicker } from '@mui/x-date-pickers';
-import { TextField } from '@mui/material';
-import moment from 'moment';
+import { Autocomplete, TextField } from '@mui/material';
+import { useAuthContext } from 'src/auth/hooks';
+import axios from 'axios';
+import { STUDENT_GENDER, courses } from 'src/_mock/_student';
+import countrystatecity from '../../_mock/map/csc.json';
 
 // ----------------------------------------------------------------------
 
 export default function StudentAccountGeneral() {
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { user } = useMockedUser();
-
-  const GenderType = ['Male', 'Female', 'Other'];
-  const courseType = [
-    'flutter development',
-    'android development',
-    'game development',
-    'full stack development',
-    'web development',
-    'node js',
-    'react js',
-  ];
-
   const UpdateUserSchema = Yup.object().shape({
-    photoURL: Yup.mixed().nullable().required('Avatar is required'),
-    firstName: Yup.string().required('firstName is required'),
-    LastName: Yup.string().required('lastName is required'),
+    // photoURL: Yup.mixed().nullable().required('Avatar is required'),
+    firstName: Yup.string().required('First Name is required'),
+    lastName: Yup.string().required('Last Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     contact: Yup.string().required('Phone number is required'),
     gender: Yup.string().required('Gender is required'),
-    dob: Yup.date().required('Date is required'),
-    eduction: Yup.string().required('eduction is required'),
-    school: Yup.string().required('school is required'),
+    dob: Yup.date().required('Date of Birth is required'),
+    joining_date: Yup.date().required('Joining Date is required'),
+    education: Yup.string().required('Education is required'),
+    college: Yup.string().required('School/College is required'),
     course: Yup.string().required('Course is required'),
-    joinDate: Yup.string().required('Join date is required'),
-    Bloodgroup: Yup.string().required('Bloodgroup is required'),
-    enrollmentNo: Yup.string().required('enrollmentNo is required'),
-    address1: Yup.string().required('Address is required'),
-    address2: Yup.string().required('Address 2  is required'),
-    country: Yup.string().required('Country is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    // about: Yup.string().required('About is required'),
-    // not required
-    // isPublic: Yup.boolean(),
+    blood_group: Yup.string().required('Blood Group is required'),
   });
-
-  const defaultValues = {
-    displayName: user?.displayName || '',
-    email: user?.email || '',
-    photoURL: user?.photoURL || null,
-    phoneNumber: user?.phoneNumber || '',
-    country: user?.country || '',
-    address: user?.address || '',
-    state: user?.state || '',
-    city: user?.city || '',
-    zipCode: user?.zipCode || '',
-    dob: moment().format('DD/MM/YYYY'),
-    // about: user?.about || '',
-    // isPublic: user?.isPublic || false,
-  };
 
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
-    defaultValues,
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      contact: '',
+      email: '',
+      gender: '',
+      course: '',
+      education: '',
+      college: '',
+      dob: null,
+      joining_date: null,
+      enrollment_no: '',
+      blood_group: '',
+      address_1: '',
+      address_2: '',
+      country: '',
+      state: '',
+      city: '',
+      zip_code: '',
+    },
   });
 
   const {
     setValue,
+    reset,
+    watch,
+    control,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
+  const postInquiry = async (newInquiry) => {
+    const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/inquiry`;
+    const response = await axios.post(URL, newInquiry);
+    return response.data;
+  };
+
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
-      console.info('DATA', data);
-    } catch (error) {
-      console.error(error);
-    }
+    const addStudent = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      contact: data.contact,
+      email: data.email,
+      gender: data.gender,
+      course: data.course,
+      education: data.education,
+      college: data.college,
+      dob: data.dob,
+      joining_date: data.joining_date,
+      enrollment_no: data.enrollment_no,
+      blood_group: data.blood_group,
+      address_1: data.address_1,
+      address_2: data.address_2,
+      country: data.country,
+      state: data.state,
+      city: data.city,
+      zipcode: data.zipcode,
+    };
+    console.log(addStudent);
+    // try {
+    //   await postInquiry(addStudent);
+    //   enqueueSnackbar('Update success!', { variant: 'success' });
+    //   reset();
+    // } catch (error) {
+    //   console.error(error);
+    //   enqueueSnackbar('Update failed. Please try again.', { variant: 'error' });
+    // }
   });
 
   const handleDrop = useCallback(
@@ -127,23 +134,7 @@ export default function StudentAccountGeneral() {
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
-            <RHFUploadAvatar
-              name="photoURL"
-              maxSize={3145728}
-              onDrop={handleDrop}
-              helperText={
-                <Typography
-                  variant="caption"
-                  sx={{
-                    mt: 3,
-                    mx: 'auto',
-                    display: 'block',
-                    textAlign: 'center',
-                    color: 'text.disabled',
-                  }}
-                ></Typography>
-              }
-            />
+            <RHFUploadAvatar name="photoURL" maxSize={3145728} onDrop={handleDrop} />
             <Button variant="soft" color="error" sx={{ mt: 3 }}>
               Delete User
             </Button>
@@ -168,82 +159,120 @@ export default function StudentAccountGeneral() {
               <RHFAutocomplete
                 name="gender"
                 type="gender"
-                label="gender"
+                label="Gender"
                 placeholder="Choose a gender"
-                options={GenderType}
+                options={STUDENT_GENDER.map((option) => option)}
+                getOptionLabel={(option) => option}
               />
               <Stack spacing={1.5}>
                 <Controller
                   name="dob"
+                  control={control}
                   render={({ field, fieldState: { error } }) => (
                     <DatePicker
                       {...field}
-                      value={field.value ? moment(field.value).toDate() : null}
-                      onChange={(newDate) => {
-                        const formattedDate = newDate ? moment(newDate).format('DD/MM/YYYY') : null;
-                        setValue('dob', formattedDate);
-                        field.onChange(formattedDate);
-                      }}
+                      label="Date of Birth"
                       renderInput={(params) => (
                         <TextField
                           {...params}
                           fullWidth
                           error={!!error}
-                          helperText={error?.message}
+                          helperText={error ? error.message : ''}
                         />
                       )}
                     />
                   )}
                 />
               </Stack>
-              <RHFTextField name="eduction" label="Eduction" />
-              <RHFTextField name="school" label="School / collage" />
+              <RHFTextField name="education" label="Education" />
+              <RHFTextField name="college" label="School/College" />
               <RHFAutocomplete
                 name="course"
                 type="course"
-                label="course"
+                label="Course"
                 placeholder="Choose a course"
-                options={courseType}
+                options={courses.map(course => course.label)}
               />
               <Stack spacing={1.5}>
                 <Controller
-                  name="joinDate"
+                  name="joining_date"
+                  control={control}
                   render={({ field, fieldState: { error } }) => (
                     <DatePicker
                       {...field}
-                      value={field.value ? moment(field.value).toDate() : null}
-                      onChange={(newDate) => {
-                        const formattedDate = newDate ? moment(newDate).format('DD/MM/YYYY') : null;
-                        setValue('joinDate', formattedDate);
-                        field.onChange(formattedDate);
-                      }}
+                      label="Joining Date"
                       renderInput={(params) => (
                         <TextField
                           {...params}
                           fullWidth
                           error={!!error}
-                          helperText={error?.message}
+                          helperText={error ? error.message : ''}
                         />
                       )}
                     />
                   )}
                 />
               </Stack>
-              <RHFTextField name="Bloodgroup" label="Bloodgroup" />
-              <RHFTextField name="enrollmentNo" label="enrollmentNo" />
-              <RHFTextField name="address1" label="Address 1" />
-              <RHFTextField name="address2" label="Address 2" />
-              <RHFAutocomplete
+              <RHFTextField name="blood_group" label="Blood Group" />
+              <RHFTextField name="enrollment_no" label="Enrollment No" />
+              <RHFTextField name="address_1" label="Address 1" />
+              <RHFTextField name="address_2" label="Address 2" />
+              <Controller
                 name="country"
-                type="country"
-                label="Country"
-                placeholder="Choose a country"
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={countrystatecity.map((country) => country.name)}
+                    onChange={(event, value) => field.onChange(value)}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Country" variant="outlined" />
+                    )}
+                  />
+                )}
               />
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
+              <Controller
+                name="state"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={
+                      watch('country')
+                        ? countrystatecity
+                            .find((country) => country.name === watch('country'))
+                            ?.states.map((state) => state.name) || []
+                        : []
+                    }
+                    onChange={(event, value) => field.onChange(value)}
+                    renderInput={(params) => (
+                      <TextField {...params} label="State" variant="outlined" />
+                    )}
+                  />
+                )}
+              />
+              <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    options={
+                      watch('state')
+                        ? countrystatecity
+                            .find((country) => country.name === watch('country'))
+                            ?.states.find((state) => state.name === watch('state'))
+                            ?.cities.map((city) => city.name) || []
+                        : []
+                    }
+                    onChange={(event, value) => field.onChange(value)}
+                    renderInput={(params) => (
+                      <TextField {...params} label="City" variant="outlined" />
+                    )}
+                  />
+                )}
+              />
+              <RHFTextField name="zipcode" label="Zip Code" />
             </Box>
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

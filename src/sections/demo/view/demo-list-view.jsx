@@ -39,10 +39,11 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
+import { useGetAllDemos } from 'src/api/demo';
+
 import DemoTableRow from '../demo-table-row';
 import DemoTableToolbar from '../demo-table-toolbar';
 import DemoTableFiltersResult from '../demo-table-filters-result';
-import { useGetAllDemos } from 'src/api/demo';
 
 // ----------------------------------------------------------------------
 
@@ -79,7 +80,7 @@ export default function DemoListView() {
   const confirm = useBoolean();
 
   const { demo } = useGetAllDemos();
-  const { data } = demo;
+  console.log(demo);
 
   const [tableData, setTableData] = useState(_orders);
 

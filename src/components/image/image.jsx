@@ -15,7 +15,6 @@ const Image = forwardRef(
       ratio,
       overlay,
       disabledEffect = false,
-      //
       alt,
       src,
       afterLoad,

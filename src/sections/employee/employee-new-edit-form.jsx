@@ -133,7 +133,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
 
   async function updateEmployee(id, data) {
     try {
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/employee/${employeeId}`;
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${employeeId}/employee`;
       const response = await axios.put(URL, data);
       return response.data;
     } catch (error) {
@@ -431,7 +431,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
                   />
                 )}
               />
-              <RHFTextField name="zipcode" label="Zip code" />
+              <RHFTextField name="address.zipcode" label="Zip code" />
             </Box>
           </Stack>
         </Card>
