@@ -12,6 +12,7 @@ import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
 import BatchListPage from 'src/pages/dashboard/batches/list';
 import BatchCreatePage from 'src/pages/dashboard/batches/create';
 import BatchEditPage from 'src/pages/dashboard/batches/edit';
+import StudentCardsPage from 'src/pages/dashboard/student/cards';
 
 // ----------------------------------------------------------------------
 
@@ -58,7 +59,6 @@ const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 // STUDENT
 const StudentProfilePage = lazy(() => import('src/pages/dashboard/student/profile'));
 const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
-const StudentAccountPage = lazy(() => import('src/pages/dashboard/student/account'));
 const StudentCreatePage = lazy(() => import('src/pages/dashboard/student/new'));
 const StudentEditPage = lazy(() => import('src/pages/dashboard/student/edit'));
 const GuardianDetailsPage = lazy(() => import('src/pages/dashboard/student/guardian'));
@@ -144,11 +144,11 @@ export const dashboardRoutes = [
         children: [
           { element: <StudentProfilePage />, index: true },
           { path: 'profile', element: <StudentProfilePage /> },
+          { path: 'cards', element: <StudentCardsPage /> },
           { path: 'list', element: <StudentListPage /> },
           { path: 'new', element: <StudentCreatePage /> },
           { path: ':id/edit', element: <StudentEditPage /> },
           { path: ':id/guaridiandetails', element: <GuardianDetailsPage /> },
-          { path: 'account', element: <StudentAccountPage /> },
         ],
       },
       {

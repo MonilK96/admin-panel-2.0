@@ -16,14 +16,14 @@ export default function ExaminationList({ jobs }) {
 
   const handleView = useCallback(
     (id) => {
-      router.push(paths.dashboard.job.details(id));
+      router.push(paths.dashboard.student.details(id));
     },
     [router]
   );
 
   const handleEdit = useCallback(
     (id) => {
-      router.push(paths.dashboard.job.edit(id));
+      router.push(paths.dashboard.student.edit(id));
     },
     [router]
   );

@@ -1,3 +1,17 @@
+export const GUARDIAN_TYPES = [
+  'Mother',
+  'Father',
+  'Aunt',
+  'Uncle',
+  'brother',
+  'grandfather',
+  'grandmother',
+  'sister',
+  'guardian',
+  'family friend',
+  'other',
+  'cousin',
+];
 export const STUDENT_GENDER = ['Male', 'Female', 'Other'];
 
 export const courses = [

@@ -8,7 +8,6 @@ export default function SimpleLayout({ children }) {
   return (
     <>
       <Header />
-
       {children}
     </>
   );

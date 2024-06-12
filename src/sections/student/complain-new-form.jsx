@@ -3,47 +3,20 @@ import PropTypes from 'prop-types';
 import { useMemo, useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
-
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Unstable_Grid2';
-import ButtonBase from '@mui/material/ButtonBase';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { countries } from 'src/assets/data';
-import {
-  _roles,
-  JOB_SKILL_OPTIONS,
-  JOB_BENEFIT_OPTIONS,
-  JOB_EXPERIENCE_OPTIONS,
-  JOB_EMPLOYMENT_TYPE_OPTIONS,
-  JOB_WORKING_SCHEDULE_OPTIONS,
-} from 'src/_mock';
-
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFEditor,
-  RHFSwitch,
-  RHFTextField,
-  RHFRadioGroup,
-  RHFAutocomplete,
-  RHFMultiCheckbox,
-} from 'src/components/hook-form';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -64,9 +37,9 @@ export default function ComplainNewForm({ currentJob }) {
     () => ({
       remark: '',
       complain: '',
-      complainDate: null, // Should be null for date fields
+      complainDate: null, 
     }),
-    [currentJob]
+    []
   );
 
   const methods = useForm({
@@ -90,7 +63,6 @@ export default function ComplainNewForm({ currentJob }) {
   const onSubmit = handleSubmit(async (data) => {
     console.log(data);
 
-    // Assuming the form submission is successful
     enqueueSnackbar('Form submitted successfully', { variant: 'success' });
     reset(defaultValues);
   });
@@ -98,7 +70,7 @@ export default function ComplainNewForm({ currentJob }) {
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4} display={'flex'} alignItems={'center'}>
+        <Grid md={4} display='flex' alignItems='center'>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Complain & Remarks
           </Typography>

@@ -10,7 +10,7 @@ export default function StudentCardsPage() {
       <Helmet>
         <title> Dashboard: Student Cards</title>
       </Helmet>
-
+      
       <StudentCardsView />
     </>
   );

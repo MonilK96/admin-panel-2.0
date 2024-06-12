@@ -42,6 +42,7 @@ import {
 import StudentTableRow from '../student-table-row';
 import StudentTableToolbar from '../student-table-toolbar';
 import StudentTableFiltersResult from '../student-table-filters-result';
+
 import { useGetStudents } from '../../../api/student';
 
 // ----------------------------------------------------------------------
@@ -147,7 +148,7 @@ export default function StudentListView() {
     },
     [router]
   );
-  
+
   const handleGuardianEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.student.guaridiandetails(id));
@@ -169,13 +170,13 @@ export default function StudentListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Student', href: paths.dashboard.student.root },
+            { name: 'Student', href: paths.dashboard.student.list },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.user.new}
+              href={paths.dashboard.student.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

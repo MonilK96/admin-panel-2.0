@@ -14,7 +14,6 @@ import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } fr
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-
 import ProfileHome from '../profile-home';
 import ProfileCover from '../profile-cover';
 import ProfileFriends from '../profile-friends';
@@ -68,11 +67,10 @@ export default function StudentProfileView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Profile"
+        heading="Student Profile"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: user?.displayName },
+          { name: 'Student', href: paths.dashboard.student.list },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

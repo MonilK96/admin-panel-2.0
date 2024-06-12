@@ -15,6 +15,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // import { AddressNewForm } from '../address';
 import GuardianAddForm from './guardian-add-form';
+
 import GuardianItem from './guardian-item';
 
 // ----------------------------------------------------------------------
@@ -28,7 +29,7 @@ export default function StudentGuardianDetails({ addressBook = [] }) {
   const GuardianNewForm = useBoolean();
 
   const handleAddNewAddress = useCallback((address) => {
-    console.info('ADDRESS', address);
+    console.info('address', address);
   }, []);
 
   const handleSelectedId = useCallback(

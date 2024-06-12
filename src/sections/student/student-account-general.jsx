@@ -1,35 +1,31 @@
+import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
-import { useCallback } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
+import axios from 'axios';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useSnackbar } from 'src/components/snackbar';
+import { DatePicker } from '@mui/x-date-pickers';
+import { Autocomplete, TextField } from '@mui/material';
+import { useSnackbar } from 'notistack'; // Correct import for Snackbar
+import { useAuthContext } from 'src/auth/hooks';
 import FormProvider, {
   RHFTextField,
   RHFUploadAvatar,
   RHFAutocomplete,
 } from 'src/components/hook-form';
-import { DatePicker } from '@mui/x-date-pickers';
-import { Autocomplete, TextField } from '@mui/material';
-import { useAuthContext } from 'src/auth/hooks';
-import axios from 'axios';
 import { STUDENT_GENDER, courses } from 'src/_mock/_student';
 import countrystatecity from '../../_mock/map/csc.json';
 
-// ----------------------------------------------------------------------
-
 export default function StudentAccountGeneral() {
   const { user } = useAuthContext();
+  const [profilePic, setProfilePic] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
   const UpdateUserSchema = Yup.object().shape({
-    // photoURL: Yup.mixed().nullable().required('Avatar is required'),
     firstName: Yup.string().required('First Name is required'),
     lastName: Yup.string().required('Last Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
@@ -38,7 +34,7 @@ export default function StudentAccountGeneral() {
     dob: Yup.date().required('Date of Birth is required'),
     joining_date: Yup.date().required('Joining Date is required'),
     education: Yup.string().required('Education is required'),
-    college: Yup.string().required('School/College is required'),
+    school_college: Yup.string().required('School/College is required'),
     course: Yup.string().required('Course is required'),
     blood_group: Yup.string().required('Blood Group is required'),
   });
@@ -46,6 +42,7 @@ export default function StudentAccountGeneral() {
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues: {
+      profile_pic: null,
       firstName: '',
       lastName: '',
       contact: '',
@@ -53,7 +50,7 @@ export default function StudentAccountGeneral() {
       gender: '',
       course: '',
       education: '',
-      college: '',
+      school_college: '',
       dob: null,
       joining_date: null,
       enrollment_no: '',
@@ -63,7 +60,10 @@ export default function StudentAccountGeneral() {
       country: '',
       state: '',
       city: '',
-      zip_code: '',
+      zipcode: '',
+      total_amount: '',
+      amount_paid: '',
+      discount: '',
     },
   });
 
@@ -76,72 +76,60 @@ export default function StudentAccountGeneral() {
     formState: { isSubmitting },
   } = methods;
 
-  const postInquiry = async (newInquiry) => {
-    const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/inquiry`;
-    const response = await axios.post(URL, newInquiry);
-    return response.data;
+  const postStudent = async (formData) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.REACT_APP_AUTH_API}/api/company/${user.company_id}/student`,
+        formData
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error('Update failed. Please try again.');
+    }
   };
 
-  const onSubmit = handleSubmit(async (data) => {
-    const addStudent = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      contact: data.contact,
-      email: data.email,
-      gender: data.gender,
-      course: data.course,
-      education: data.education,
-      college: data.college,
-      dob: data.dob,
-      joining_date: data.joining_date,
-      enrollment_no: data.enrollment_no,
-      blood_group: data.blood_group,
-      address_1: data.address_1,
-      address_2: data.address_2,
-      country: data.country,
-      state: data.state,
-      city: data.city,
-      zipcode: data.zipcode,
-    };
-    console.log(addStudent);
-    // try {
-    //   await postInquiry(addStudent);
-    //   enqueueSnackbar('Update success!', { variant: 'success' });
-    //   reset();
-    // } catch (error) {
-    //   console.error(error);
-    //   enqueueSnackbar('Update failed. Please try again.', { variant: 'error' });
-    // }
-  });
+  const onSubmit = async (data) => {
+    try {
+      await postStudent(data);
+      enqueueSnackbar('Update success!', { variant: 'success' });
+      reset();
+    } catch (error) {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    }
+  };
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('photoURL', newFile, { shouldValidate: true });
-      }
+      const formData = new FormData();
+      formData.append('profile-pic', file);
+      const URL = `${import.meta.env.REACT_APP_AUTH_API}/api/company/${user.company_id}/student`;
+      axios
+        .post(URL, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          const uploadedImageUrl = response.data.profile_pic;
+          setProfilePic(uploadedImageUrl);
+        })
+        .catch((error) => {
+          console.error('Upload error:', error);
+        });
     },
-    [setValue]
+    [user.company_id]
   );
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
-            <RHFUploadAvatar name="photoURL" maxSize={3145728} onDrop={handleDrop} />
-            <Button variant="soft" color="error" sx={{ mt: 3 }}>
-              Delete User
-            </Button>
+            <RHFUploadAvatar name="profile_pic" onDrop={handleDrop} />
           </Card>
         </Grid>
-
-        <Grid xs={12} md={8}>
+        <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -161,8 +149,9 @@ export default function StudentAccountGeneral() {
                 type="gender"
                 label="Gender"
                 placeholder="Choose a gender"
-                options={STUDENT_GENDER.map((option) => option)}
+                options={STUDENT_GENDER}
                 getOptionLabel={(option) => option}
+                isOptionEqualToValue={(option, value) => option === value}
               />
               <Stack spacing={1.5}>
                 <Controller
@@ -185,13 +174,14 @@ export default function StudentAccountGeneral() {
                 />
               </Stack>
               <RHFTextField name="education" label="Education" />
-              <RHFTextField name="college" label="School/College" />
+              <RHFTextField name="school_college" label="School/College" />
               <RHFAutocomplete
                 name="course"
                 type="course"
                 label="Course"
                 placeholder="Choose a course"
-                options={courses.map(course => course.label)}
+                options={courses.map((course) => course.label)}
+                isOptionEqualToValue={(option, value) => option === value}
               />
               <Stack spacing={1.5}>
                 <Controller
@@ -225,6 +215,7 @@ export default function StudentAccountGeneral() {
                     {...field}
                     options={countrystatecity.map((country) => country.name)}
                     onChange={(event, value) => field.onChange(value)}
+                    isOptionEqualToValue={(option, value) => option === value}
                     renderInput={(params) => (
                       <TextField {...params} label="Country" variant="outlined" />
                     )}
@@ -245,6 +236,7 @@ export default function StudentAccountGeneral() {
                         : []
                     }
                     onChange={(event, value) => field.onChange(value)}
+                    isOptionEqualToValue={(option, value) => option === value}
                     renderInput={(params) => (
                       <TextField {...params} label="State" variant="outlined" />
                     )}
@@ -266,6 +258,7 @@ export default function StudentAccountGeneral() {
                         : []
                     }
                     onChange={(event, value) => field.onChange(value)}
+                    isOptionEqualToValue={(option, value) => option === value}
                     renderInput={(params) => (
                       <TextField {...params} label="City" variant="outlined" />
                     )}
@@ -273,6 +266,9 @@ export default function StudentAccountGeneral() {
                 )}
               />
               <RHFTextField name="zipcode" label="Zip Code" />
+              <RHFTextField name="total_amount" label="Total Amount" />
+              <RHFTextField name="amount_paid" label="Amount Paid" />
+              <RHFTextField name="discount" label="Discount" />
             </Box>
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

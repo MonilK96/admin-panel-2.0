@@ -1,12 +1,22 @@
-import PropTypes from 'prop-types';
-
 import Box from '@mui/material/Box';
+
+import { useEffect } from 'react';
+
+
+import { useGetStudents } from 'src/api/student';
+
 
 import StudentCard from './student-card';
 
 // ----------------------------------------------------------------------
 
-export default function StudentCardList({ users }) {
+export default function StudentCardList() {
+  const { students ,mutate} = useGetStudents();
+
+  useEffect(()=>{
+    mutate();
+  },[mutate])
+
   return (
     <Box
       gap={3}
@@ -14,16 +24,12 @@ export default function StudentCardList({ users }) {
       gridTemplateColumns={{
         xs: 'repeat(1, 1fr)',
         sm: 'repeat(2, 1fr)',
-        md: 'repeat(3, 1fr)',
+        md: 'repeat(4, 2fr)',
       }}
     >
-      {users.map((user) => (
-        <StudentCard key={user.id} user={user} />
+      {students.map((user) => (
+        <StudentCard key={user._id} user={user} />
       ))}
     </Box>
   );
 }
-
-StudentCardList.propTypes = {
-  users: PropTypes.array,
-};

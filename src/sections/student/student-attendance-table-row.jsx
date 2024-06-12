@@ -57,7 +57,7 @@ export default function StudentAttendanceTableRow({
             disableTypography
             primary={
               <Typography variant="body2" noWrap>
-                {firstName + ' ' + lastName}
+                {firstName + lastName}
               </Typography>
             }
             secondary={
@@ -67,7 +67,7 @@ export default function StudentAttendanceTableRow({
                 onClick={onViewRow}
                 sx={{ color: 'text.disabled', cursor: 'pointer' }}
               >
-                {firstName + ' ' + lastName}
+                {firstName + lastName}
               </Link>
             }
           />

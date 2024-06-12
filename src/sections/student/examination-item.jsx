@@ -37,8 +37,8 @@ export default function ExaminationItem({ job, onView, onEdit, onDelete }) {
 
         <Stack sx={{ p: 3, pb: 2 }}>
           <Avatar
-            alt={'https://multishoring.com/wp-content/uploads/2024/04/JavaScript-Symbol.png'}
-            src={'https://multishoring.com/wp-content/uploads/2024/04/JavaScript-Symbol.png'}
+            src='https://multishoring.com/wp-content/uploads/2024/04/JavaScript-Symbol.png'
+            alt="image"
             variant="rounded"
             sx={{ width: 48, height: 48, mb: 2 }}
           />

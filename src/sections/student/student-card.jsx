@@ -2,28 +2,20 @@ import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import { alpha, useTheme } from '@mui/material/styles';
-
-import { fShortenNumber } from 'src/utils/format-number';
-
-import { _socials } from 'src/_mock';
 import { AvatarShape } from 'src/assets/illustrations';
 
 import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
+import Grid from '@mui/material/Grid';
 
 // ----------------------------------------------------------------------
 
 export default function StudentCard({ user }) {
   const theme = useTheme();
-
-  const { name, coverUrl, role, totalFollowers, totalPosts, avatarUrl, totalFollowing } = user;
 
   return (
     <Card sx={{ textAlign: 'center' }}>
@@ -40,8 +32,8 @@ export default function StudentCard({ user }) {
         />
 
         <Avatar
-          alt={name}
-          src={avatarUrl}
+          alt="image"
+          src={user.personal_info.profile_pic}
           sx={{
             width: 64,
             height: 64,
@@ -55,8 +47,8 @@ export default function StudentCard({ user }) {
         />
 
         <Image
-          src={coverUrl}
-          alt={coverUrl}
+          src="https://api-dev-minimal-v510.vercel.app/assets/images/cover/cover_1.jpg"
+          alt="cover_image"
           ratio="16/9"
           overlay={alpha(theme.palette.grey[900], 0.48)}
         />
@@ -64,61 +56,47 @@ export default function StudentCard({ user }) {
 
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
-        primary={name}
-        secondary={role}
+        primary={`${user.personal_info.firstName} ${user.personal_info.lastName}`}
+        secondary={user.personal_info.course}
         primaryTypographyProps={{ typography: 'subtitle1' }}
         secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
       />
 
-      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mb: 2.5 }}>
-        {_socials.map((social) => (
-          <IconButton
-            key={social.name}
-            sx={{
-              color: social.color,
-              '&:hover': {
-                bgcolor: alpha(social.color, 0.08),
-              },
-            }}
-          >
-            <Iconify icon={social.icon} />
-          </IconButton>
-        ))}
-      </Stack>
-
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <Box
-        display="grid"
-        gridTemplateColumns="repeat(3, 1fr)"
-        sx={{ py: 3, typography: 'subtitle1' }}
-      >
-        <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Follower
-          </Typography>
-          {fShortenNumber(totalFollowers)}
-        </div>
+      <Box sx={{ p: 3, typography: 'subtitle1' }}>
+        <Box
+          columnGap={2}
+          rowGap={2}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            lg: 'repeat(2, 2fr)',
+          }}
+        >
+          <Grid>
+            <Typography variant="h5" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
+              Email
+            </Typography>
+            <Typography variant="caption" component="div">
+              {user.personal_info.email}
+            </Typography>
+          </Grid>
 
-        <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Following
-          </Typography>
-
-          {fShortenNumber(totalFollowing)}
-        </div>
-
-        <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Total Post
-          </Typography>
-          {fShortenNumber(totalPosts)}
-        </div>
+          <Grid>
+            <Typography variant="h5" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
+              Contact
+            </Typography>
+            <Typography variant="caption" component="div">
+              {user.personal_info.contact}
+            </Typography>
+          </Grid>
+        </Box>
       </Box>
     </Card>
   );
 }
 
 StudentCard.propTypes = {
-  user: PropTypes.object,
+  user: PropTypes.object.isRequired,
 };

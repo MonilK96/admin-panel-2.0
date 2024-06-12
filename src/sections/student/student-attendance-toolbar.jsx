@@ -20,11 +20,16 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import Iconify from 'src/components/iconify';
 
-import InvoicePDF from './invoice-pdf';
+import InvoicePDF from '../invoice/invoice-pdf';
 
 // ----------------------------------------------------------------------
 
-export default function StudentAttendanceToolbar({ invoice, currentStatus, statusOptions, onChangeStatus }) {
+export default function StudentAttendanceToolbar({
+  invoice,
+  currentStatus,
+  statusOptions,
+  onChangeStatus,
+}) {
   const router = useRouter();
 
   const view = useBoolean();

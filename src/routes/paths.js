@@ -144,15 +144,12 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/student`,
       new: `${ROOTS.DASHBOARD}/student/new`,
       list: `${ROOTS.DASHBOARD}/student/list`,
+      cards: `${ROOTS.DASHBOARD}/student/cards`,
       profile: `${ROOTS.DASHBOARD}/student/profile`,
       account: `${ROOTS.DASHBOARD}/student/account`,
       edit: (id) => `${ROOTS.DASHBOARD}/student/${id}/edit`,
       view: (id) => `${ROOTS.DASHBOARD}/student/${id}`,
       guaridiandetails: (id) => `${ROOTS.DASHBOARD}/student/${id}/guaridiandetails`,
-      demo: {
-        edit: `${ROOTS.DASHBOARD}/student/${MOCK_ID}/edit`,
-        view: `${ROOTS.DASHBOARD}/student/${MOCK_ID}`,
-      },
     },
 
     employee: {
@@ -241,10 +238,10 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/demo`,
     },
 
-    seminar: {
-      root: `${ROOTS.DASHBOARD}/seminar`,
-      list: `${ROOTS.DASHBOARD}/seminar/list`,
-    },
+    // seminar: {
+    //   root: `${ROOTS.DASHBOARD}/seminar`,
+    //   list: `${ROOTS.DASHBOARD}/seminar/list`,
+    // },
 
     attendance: {
       root: `${ROOTS.DASHBOARD}/attendance`,

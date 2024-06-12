@@ -9,18 +9,14 @@ import Dialog from '@mui/material/Dialog';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
+import { GUARDIAN_TYPES } from 'src/_mock/_student';
 import DialogContent from '@mui/material/DialogContent';
 
 // Import the countries if needed
 // import { countries } from 'src/assets/data';
-
-import FormProvider, {
-  RHFCheckbox,
-  RHFTextField,
-  RHFRadioGroup,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
 import { Box } from '@mui/material';
+
+import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 
 const guardianTypes = [
   'Mother',

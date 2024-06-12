@@ -11,12 +11,7 @@ import SvgColor from 'src/components/svg-color';
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
-  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
-  // OR
-  // <Iconify icon="fluent:mail-24-filled" />
-  // https://icon-sets.iconify.design/solar/
-  // https://www.streamlinehq.com/icons
-);
+  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />);
 
 const ICONS = {
   job: icon('ic_job'),
@@ -122,11 +117,11 @@ export function useNavData() {
             path: paths.dashboard.student.root,
             icon: ICONS.user,
             children: [
-              { title: t('profile'), path: paths.dashboard.student.root },
+              // { title: t('profile'), path: paths.dashboard.student.root },
               { title: t('list'), path: paths.dashboard.student.list },
-              { title: t('create'), path: paths.dashboard.student.new },
-              { title: t('edit'), path: paths.dashboard.student.demo.edit },
-              { title: t('account'), path: paths.dashboard.student.account },
+              { title: t('card'), path: paths.dashboard.student.cards },
+              // { title: t('edit'), path: paths.dashboard.student.demo.edit },
+              // { title: t('account'), path: paths.dashboard.student.account }
             ],
           },
 

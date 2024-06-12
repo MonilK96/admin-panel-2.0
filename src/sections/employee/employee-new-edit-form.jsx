@@ -192,7 +192,7 @@ export default function EmployeeNewEditForm({ employeeId }) {
     const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${employeeId}/employee/profile-pic`;
     const formData = new FormData();
     formData.append('profile-pic', file);
-
+    console.log(formData);
     axios
       .put(URL, formData, {
         headers: {
