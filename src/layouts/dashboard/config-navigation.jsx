@@ -101,20 +101,7 @@ export function useNavData() {
       {
         subheader: t('management'),
         items: [
-          // USER
-          {
-            title: t('user'),
-            path: paths.dashboard.user.root,
-            icon: ICONS.user,
-            children: [
-              { title: t('profile'), path: paths.dashboard.user.root },
-              { title: t('cards'), path: paths.dashboard.user.cards },
-              { title: t('list'), path: paths.dashboard.user.list },
-              { title: t('create'), path: paths.dashboard.user.new },
-              { title: t('edit'), path: paths.dashboard.user.demo.edit },
-              { title: t('account'), path: paths.dashboard.user.account },
-            ],
-          },
+
 
           // STUDENT
           {
@@ -233,18 +220,7 @@ export function useNavData() {
             ],
           },
 
-          // BLOG
-          {
-            title: t('blog'),
-            path: paths.dashboard.post.root,
-            icon: ICONS.blog,
-            children: [
-              { title: t('list'), path: paths.dashboard.post.root },
-              { title: t('details'), path: paths.dashboard.post.demo.details },
-              { title: t('create'), path: paths.dashboard.post.new },
-              { title: t('edit'), path: paths.dashboard.post.demo.edit },
-            ],
-          },
+        
 
           // JOB
           {

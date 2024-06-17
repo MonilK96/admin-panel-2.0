@@ -117,18 +117,7 @@ export const paths = {
       fees: `${ROOTS.DASHBOARD}/fees`,
     },
 
-    user: {
-      root: `${ROOTS.DASHBOARD}/user`,
-      new: `${ROOTS.DASHBOARD}/user/new`,
-      list: `${ROOTS.DASHBOARD}/user/list`,
-      cards: `${ROOTS.DASHBOARD}/user/cards`,
-      profile: `${ROOTS.DASHBOARD}/user/profile`,
-      account: `${ROOTS.DASHBOARD}/user/account`,
-      edit: (id) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
-      demo: {
-        edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
-      },
-    },
+
 
     inquiry: {
       root: `${ROOTS.DASHBOARD}/inquiry`,
@@ -197,16 +186,7 @@ export const paths = {
       },
     },
 
-    post: {
-      root: `${ROOTS.DASHBOARD}/post`,
-      new: `${ROOTS.DASHBOARD}/post/new`,
-      details: (title) => `${ROOTS.DASHBOARD}/post/${paramCase(title)}`,
-      edit: (title) => `${ROOTS.DASHBOARD}/post/${paramCase(title)}/edit`,
-      demo: {
-        details: `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}`,
-        edit: `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}/edit`,
-      },
-    },
+
 
     order: {
       root: `${ROOTS.DASHBOARD}/order`,

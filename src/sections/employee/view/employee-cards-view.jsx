@@ -23,13 +23,13 @@ export default function EmployeeCardsView() {
         heading="User Cards"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: 'User', href: paths.dashboard.root },
           { name: 'Cards' },
         ]}
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.user.new}
+            href={paths.dashboard.student.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >

@@ -48,13 +48,7 @@ const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
-// USER
-const UserProfilePage = lazy(() => import('src/pages/dashboard/user/profile'));
-const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
-const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
-const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
-const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
-const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
+
 // STUDENT
 const StudentProfilePage = lazy(() => import('src/pages/dashboard/student/profile'));
 const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
@@ -69,11 +63,7 @@ const EmployeeListPage = lazy(() => import('src/pages/dashboard/employee/list'))
 const EmployeeAccountPage = lazy(() => import('src/pages/dashboard/employee/account'));
 const EmployeeCreatePage = lazy(() => import('src/pages/dashboard/employee/new'));
 const EmployeeEditPage = lazy(() => import('src/pages/dashboard/employee/edit'));
-// BLOG
-const BlogPostsPage = lazy(() => import('src/pages/dashboard/post/list'));
-const BlogPostPage = lazy(() => import('src/pages/dashboard/post/details'));
-const BlogNewPostPage = lazy(() => import('src/pages/dashboard/post/new'));
-const BlogEditPostPage = lazy(() => import('src/pages/dashboard/post/edit'));
+
 // JOB
 const JobDetailsPage = lazy(() => import('src/pages/dashboard/job/details'));
 const JobListPage = lazy(() => import('src/pages/dashboard/job/list'));
@@ -118,18 +108,7 @@ export const dashboardRoutes = [
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'fees', element: <FeesPage /> },
-      {
-        path: 'user',
-        children: [
-          { element: <UserProfilePage />, index: true },
-          { path: 'profile', element: <UserProfilePage /> },
-          { path: 'cards', element: <UserCardsPage /> },
-          { path: 'list', element: <UserListPage /> },
-          { path: 'new', element: <UserCreatePage /> },
-          { path: ':id/edit', element: <UserEditPage /> },
-          { path: 'account', element: <UserAccountPage /> },
-        ],
-      },
+ 
       {
         path: 'inquiry',
         children: [
@@ -238,16 +217,7 @@ export const dashboardRoutes = [
           { path: 'new', element: <InvoiceCreatePage /> },
         ],
       },
-      {
-        path: 'post',
-        children: [
-          { element: <BlogPostsPage />, index: true },
-          { path: 'list', element: <BlogPostsPage /> },
-          { path: ':title', element: <BlogPostPage /> },
-          { path: ':title/edit', element: <BlogEditPostPage /> },
-          { path: 'new', element: <BlogNewPostPage /> },
-        ],
-      },
+   
       {
         path: 'job',
         children: [
