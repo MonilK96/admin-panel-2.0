@@ -150,7 +150,7 @@ export default function ExaminationListView() {
           { name: 'Dashboard', href: paths.dashboard.root },
           {
             name: 'Job',
-            href: paths.dashboard.job.root,
+            href: paths.dashboard.student.root,
           },
           { name: 'List' },
         ]}

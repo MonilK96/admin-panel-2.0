@@ -46,7 +46,7 @@ export default function ExaminationItem({ job, onView, onEdit, onDelete }) {
           <ListItemText
             sx={{ mb: 1 }}
             primary={
-              <Link component={RouterLink} href={paths.dashboard.job.details(id)} color="inherit">
+              <Link component={RouterLink} href={paths.dashboard.student.edit(id)} color="inherit">
                 {title}
               </Link>
             }
