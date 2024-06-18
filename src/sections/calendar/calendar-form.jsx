@@ -30,16 +30,16 @@ import FormProvider, {
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import { useGetStudents } from 'src/api/student';
 import { useAuthContext } from 'src/auth/hooks';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
-export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
+export default function CalendarForm({ currentEvent, colorOptions, onClose ,mutate }) {
   const { enqueueSnackbar } = useSnackbar();
   const { students } = useGetStudents();
   const [studentId, setStudentId] = useState('');
   const { user } = useAuthContext();
   const [leaveStatus, setLeaveStatus] = useState('pending');
-
   const EventSchema = Yup.object().shape({
     title: Yup.string().max(255).required('Title is required'),
     description: Yup.string().max(5000, 'Description must be at most 5000 characters'),
@@ -48,7 +48,6 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
     start: Yup.mixed(),
     end: Yup.mixed(),
   });
-
 
   const methods = useForm({
     // resolver: yupResolver(EventSchema),
@@ -69,49 +68,50 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
   const dateError = isAfter(values.start, values.end);
 
   const eventTypeOptions = [
-    'Festival Holiday',
-    'Student Leave',
-    'Recaption Leave',
-    'Other',
-    'Personal Leave',
-    'Sick Leave',
+    'holiday',
+    'student leave',
+    'notice',
   ];
 
   const onSubmit = handleSubmit(async (data) => {
-    getValues().leave_type === 'Student Leave'
-      ? console.log('Data : ', { ...getValues(), student: studentId,leave_status: leaveStatus })
-      : console.log('Data : ', { ...getValues(), student: user._id ,leave_status: leaveStatus});
-
-    const eventData = {
-      id: currentEvent?.id ? currentEvent?.id : uuidv4(),
-      color: data?.color,
-      title: data?.title,
-      allDay: data?.allDay,
-      description: data?.description,
-      end: data?.end,
-      start: data?.start,
-    };
-
+    const payload =
+      getValues().event_type === 'student leave'
+        ? {
+            ...getValues(),
+            user_id: studentId || currentEvent.user_id._id,
+            leave_status: leaveStatus,
+            company_id: user.company_id,
+          }
+        : {
+            ...getValues(),
+            user_id: user._id,
+            leave_status: leaveStatus,
+            company_id: user.company_id,
+          };
     try {
       if (!dateError) {
-        if (currentEvent?.id) {
-          await updateEvent(eventData);
+        if (currentEvent?._id) {
+          await updateEvent(payload); 
+          mutate();
           enqueueSnackbar('Update success!');
         } else {
-          await createEvent(eventData);
+          await createEvent(payload);
+          mutate();
           enqueueSnackbar('Create success!');
         }
         onClose();
         reset();
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.log('ERROR : ', err);
     }
+
   });
 
   const onDelete = useCallback(async () => {
     try {
-      await deleteEvent(`${currentEvent?.id}`);
+      await deleteEvent(`${currentEvent?._id}`);
+      mutate();
       enqueueSnackbar('Delete success!');
       onClose();
     } catch (error) {
@@ -130,7 +130,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3} sx={{ px: 3 }}>
         <RHFAutocomplete
-          name="leave_type"
+          name="event_type"
           label="Event Type"
           options={eventTypeOptions}
           getOptionLabel={(option) => option}
@@ -141,14 +141,13 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
             </li>
           )}
         />
-        {currentEvent?.leave_type === 'Sick leave' ||
-        currentEvent?.leave_type === 'Personal Leave' ? (
+        {currentEvent?.event_type === 'student leave' ? (
           <RHFTextField name="reason" label="Reason" multiline rows={3} />
         ) : (
           <>
-            {getValues().leave_type === 'Student Leave' && (
+            {getValues().event_type === 'student leave' && (
               <RHFAutocomplete
-                name="student"
+                name=""
                 label="Student Name"
                 options={students}
                 getOptionLabel={(option) =>
@@ -156,17 +155,18 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
                 }
                 isOptionEqualToValue={(option, value) => option === value}
                 renderOption={(props, option) => (
-                  <li {...props} key={option.personal_info.email}>
+                  <li {...props} key={option?.personal_info?.email}>
                     {option?.personal_info?.firstName} {option?.personal_info?.lastName}
                   </li>
                 )}
                 onChange={handleStudentId}
               />
             )}
+
             <RHFTextField name="event" label="Event" />
 
             <Controller
-              name="startDate"
+              name="from"
               control={control}
               render={({ field }) => (
                 <MobileDatePicker
@@ -189,7 +189,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
             />
 
             <Controller
-              name="endDate"
+              name="to"
               control={control}
               render={({ field }) => (
                 <MobileDatePicker
@@ -212,16 +212,21 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
                 />
               )}
             />
-            <RHFTextField name="leave_description" label="Description" multiline rows={3} />
+            <RHFTextField name="description" label="Description" multiline rows={3} />
           </>
         )}
       </Stack>
-      {currentEvent?.leave_type === 'Sick leave' ||
-      currentEvent?.leave_type === 'Personal Leave' ? (
+      {currentEvent?.event_type === 'student leave' ? (
         <>
           <DialogActions>
+            <Tooltip title="Delete Event">
+              <IconButton onClick={onDelete}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Tooltip>
+            <Box sx={{ flexGrow: 1 }} />
+
             <Button
-              size="small"
               color="error"
               variant="contained"
               type="submit"
@@ -230,7 +235,6 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
               Reject
             </Button>
 
-            <Box sx={{ flexGrow: 1 }} />
 
             <LoadingButton
               type="submit"
@@ -247,13 +251,11 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }) {
       ) : (
         <>
           <DialogActions>
-            {!!currentEvent?.id && (
-              <Tooltip title="Delete Event">
-                <IconButton onClick={onDelete}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Tooltip>
-            )}
+            <Tooltip title="Delete Event">
+              <IconButton onClick={onDelete}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+              </IconButton>
+            </Tooltip>
 
             <Box sx={{ flexGrow: 1 }} />
 

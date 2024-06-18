@@ -96,7 +96,7 @@ export default function SeminarListView() {
           },
           {
             name: 'Blog',
-            href: paths.dashboard.post.root,
+            href: paths.dashboard.student.root,
           },
           {
             name: 'List',
@@ -105,7 +105,7 @@ export default function SeminarListView() {
         action={
           <Button
             component={RouterLink}
-            href={paths.dashboard.post.new}
+            href={paths.dashboard.student.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >

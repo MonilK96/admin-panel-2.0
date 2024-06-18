@@ -36,7 +36,7 @@ export default function SeminarItemHorizontal({ post }) {
 
   return (
     <>
-      <Stack component={Card} direction="row">
+      <Stack component={Card} direction="row" >
         <Stack
           sx={{
             p: (theme) => theme.spacing(3, 3, 2, 3),

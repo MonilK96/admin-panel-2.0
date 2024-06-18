@@ -41,9 +41,7 @@ const OPTIONS = [
 export default function AccountPopover() {
   const router = useRouter();
 
-  const { user } = useAuthContext();
-
-  const { logout } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -83,24 +81,25 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={user?.avatar_url} alt={user?.firstName}
+        <Avatar
+          src={user?.avatar_url || ''}
+          alt={user?.firstName || 'User'}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
-       />
-       
+        />
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {`${user?.firstName} ${user.lastName}`}
+            {user ? `${user.firstName} ${user.lastName}` : 'User'}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.email}
+            {user?.email || 'user@example.com'}
           </Typography>
         </Box>
 

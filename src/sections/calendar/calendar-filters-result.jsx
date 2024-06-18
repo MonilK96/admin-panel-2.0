@@ -23,6 +23,7 @@ export default function CalendarFiltersResult({
   ...other
 }) {
   const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
+ 
 
   const handleRemoveColor = (inputValue) => {
     const newValue = filters.colors.filter((item) => item !== inputValue);

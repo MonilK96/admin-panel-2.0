@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
 import { fetcher, endpoints } from 'src/utils/axios';
+import axios from 'axios';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -31,102 +33,119 @@ export function useGetEvents() {
   }, [data?.events, error, isLoading, isValidating]);
 
   return memoizedValue;
-  
 }
 
 export function useGetCalendar(page, limit) {
-   const calendarURL = 'https://admin-panel-dmawv.ondigitalocean.app/api/company/664ec7b3671bf9a7f5366599/event';
-   const { data, isLoading, error, isValidating } = useSWR(calendarURL, fetcher);
-   const memoizedValue = useMemo(
-     () => ({
-       calendar: data || [],
-       calendarLoading: isLoading,
-       calendarError: error,
-       calendarValidating: isValidating,
-       calendarEmpty: !isLoading && !data?.length,
-     }),
-     [data, error, isLoading, isValidating]
-   );
-   return memoizedValue;
+  const { user } = useAuthContext();
+  const calendarURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/${user.company_id}/event`;
+  const { data, isLoading, error, isValidating, mutate } = useSWR(calendarURL, fetcher);
+  const memoizedValue = useMemo(
+    () => ({
+      calendar: data || [],
+      calendarLoading: isLoading,
+      calendarError: error,
+      calendarValidating: isValidating,
+      calendarEmpty: !isLoading && !data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating, mutate]
+  );
+  return memoizedValue;
 }
-
 
 // ----------------------------------------------------------------------
 
 export async function createEvent(eventData) {
-  /**
-   * Work on server
-   */
-  // const data = { eventData };
-  // await axios.post(URL, data);
-
-  /**
-   * Work in local
-   */
-  mutate(
-    URL,
-    (currentData) => {
-      const events = [...currentData.events, eventData];
-
-      return {
-        ...currentData,
-        events,
-      };
-    },
-    false
-  );
+  const URL = 'https://admin-panel-dmawv.ondigitalocean.app/api/v2/event';
+  try {
+    const response = await axios.post(URL, eventData);
+    const newEvent = response.data;
+    mutate(
+      URL,
+      (currentData) => {
+        const events = [...currentData.events, newEvent];
+        return {
+          ...currentData,
+          events,
+        };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Failed to create event:', error);
+    throw error;
+  }
 }
 
 // ----------------------------------------------------------------------
 
 export async function updateEvent(eventData) {
-  /**
-   * Work on server
-   */
-  // const data = { eventData };
-  // await axios.put(endpoints.calendar, data);
-
-  /**
-   * Work in local
-   */
-  mutate(
-    URL,
-    (currentData) => {
-      const events = currentData.events.map((event) =>
-        event.id === eventData.id ? { ...event, ...eventData } : event
-      );
-
-      return {
-        ...currentData,
-        events,
-      };
-    },
-    false
-  );
+  try {
+    const response = await axios.put(
+      `https://admin-panel-dmawv.ondigitalocean.app/api/v2/event/${eventData._id}`,
+      eventData
+    );
+    const updatedEvent = response.data;
+    mutate(
+      URL,
+      (currentData) => {
+        const events = currentData.events.map((event) =>
+          event.id === eventData._id ? updatedEvent : event
+        );
+        return {
+          ...currentData,
+          events,
+        };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Failed to update event:', error);
+    throw error;
+  }
 }
 
 // ----------------------------------------------------------------------
 
 export async function deleteEvent(eventId) {
-  /**
-   * Work on server
-   */
-  // const data = { eventId };
-  // await axios.patch(endpoints.calendar, data);
+  const deleteURL = `https://admin-panel-dmawv.ondigitalocean.app/api/v2/event/${eventId}`;
+  console.log('eve : ', eventId);
+  try {
+    await axios.delete(deleteURL);
 
-  /**
-   * Work in local
-   */
-  mutate(
-    URL,
-    (currentData) => {
-      const events = currentData.events.filter((event) => event.id !== eventId);
-
-      return {
-        ...currentData,
-        events,
-      };
-    },
-    false
-  );
+    mutate(
+      URL,
+      (currentData) => {
+          const updatedEvents = currentData?.events?.filter((event) => event.id !== eventId);
+          return { ...currentData, events: updatedEvents };
+      },
+      false
+    );
+  } catch (error) {
+    console.error('Error deleting event:', error);
+  }
 }
+
+//  try {
+//    const response = await axios.delete(
+//      `https://admin-panel-dmawv.ondigitalocean.app/api/v2/event/${eventId}`,
+//      eventData
+//    );
+//    const updatedEvent = response.data;
+//    mutate(
+//      URL,
+//      (currentData) => {
+//        const events = currentData.events.map((event) =>
+//          event.id === eventData._id ? updatedEvent : event
+//        );
+//        return {
+//          ...currentData,
+//          events,
+//        };
+//      },
+//      false
+//    );
+//  } catch (error) {
+//    console.error('Failed to update event:', error);
+//    throw error;
+//  }

@@ -5,18 +5,19 @@ import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
 
 // ----------------------------------------------------------------------
 
-export default function useEvent(dummyLeave, selectEventId, selectedRange, openForm) {
-  const currentEvent = dummyLeave.find((event) => event?.id === selectEventId);
+export default function useEvent(data, selectEventId, selectedRange, openForm) {
+  const currentEvent = data?.find((event) => event?._id === selectEventId);
   const defaultValues = useMemo(
     () => ({
       // id: '',
       event: "",
-      leave_description: '',
-      leave_type: '',
+      description: '',
+      event_type: '',
+      company_id: '',
       leave_status: '',
       reason: '',
-      startDate: selectedRange ? selectedRange.start : new Date().getTime(),
-      endDate: selectedRange ? selectedRange.end : new Date().getTime(),
+      from: selectedRange ? selectedRange.start : new Date().getTime(),
+      to: selectedRange ? selectedRange.end : new Date().getTime(),
 
 
       // title: '',

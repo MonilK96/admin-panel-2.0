@@ -33,7 +33,8 @@ export default function FeesTableRow({
   onSelectRow,
   onDeleteRow,
 }) {
-  const { enrollment_no } = row;
+  const { enrollment_no, fees_info } = row;
+   
   const {
     profile_pic,
     course,
@@ -43,8 +44,10 @@ export default function FeesTableRow({
     joining_date,
     firstName,
     lastName,
-  } = row.personal_info;
+  } = row?.personal_info;
 
+  const { installments } = fees_info;
+  // console.log(row.personal_info.profile_pic)
   const confirm = useBoolean();
 
   const collapse = useBoolean();
@@ -77,7 +80,7 @@ export default function FeesTableRow({
       mode: 'Cash',
     },
   ];
-
+  console.log("row : ",row)
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell padding="checkbox">
@@ -213,9 +216,9 @@ export default function FeesTableRow({
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {installMent.map((item, index) => (
+            {installments.map((item, index) => (
               <Stack
-                key={item.seNo}
+                key={index}
                 direction="row"
                 alignItems="center"
                 sx={{
@@ -238,12 +241,13 @@ export default function FeesTableRow({
                   {index + 1}
                 </Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.installMentDate}</Box>
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.installMentAmount}</Box>
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.paymentDate}</Box>
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.dewDate}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>
+                  {fDate(item.installment_date, 'dd MMM yyyy')}
+                </Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.amount}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.payment_date == null ? "-" : fDate(item.payment_date,'dd MMM yyyy')}</Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{item.mode}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{item.payment_mode}</Box>
               </Stack>
             ))}
           </Stack>

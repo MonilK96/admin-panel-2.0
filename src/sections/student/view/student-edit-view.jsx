@@ -29,7 +29,7 @@ export default function StudentEditView({ id }) {
           },
           {
             name: 'User',
-            href: paths.dashboard.root,
+            href: paths.dashboard.student.root,
           },
           { name: currentUser?.name },
         ]}

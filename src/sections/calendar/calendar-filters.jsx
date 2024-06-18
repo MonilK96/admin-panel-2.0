@@ -94,7 +94,6 @@ export default function CalendarFilters({
       />
     </Stack>
   );
-
   const renderDateRange = (
     <Stack spacing={1.5} sx={{ mb: 3, px: 2.5 }}>
       <Typography variant="subtitle2">Range</Typography>
@@ -116,11 +115,10 @@ export default function CalendarFilters({
       </Stack>
     </Stack>
   );
-
   const renderEvents = (
     <>
       <Typography variant="subtitle2" sx={{ px: 2.5, mb: 1 }}>
-        Events ({events.length})
+        Events ({events?.length})
       </Typography>
 
       <Scrollbar sx={{ height: 1 }}>
@@ -158,16 +156,10 @@ export default function CalendarFilters({
                   component="div"
                   sx={{ fontSize: 11, color: 'text.disabled' }}
                 >
-                  {event.allDay ? (
-                    fDateTime(event.start, 'dd MMM yy')
-                  ) : (
-                    <>
-                      {`${fDateTime(event.start, 'dd MMM yy p')} - ${fDateTime(
+                      {`${fDateTime(event.start, 'dd MMM yy')} - ${fDateTime(
                         event.end,
-                        'dd MMM yy p'
+                        'dd MMM yy'
                       )}`}
-                    </>
-                  )}
                 </Typography>
               }
               sx={{ display: 'flex', flexDirection: 'column-reverse' }}
@@ -193,8 +185,6 @@ export default function CalendarFilters({
       {renderHead}
 
       <Divider sx={{ borderStyle: 'dashed' }} />
-
-      {renderColors}
 
       {renderDateRange}
 

@@ -33,6 +33,7 @@ import CalendarToolbar from '../calendar-toolbar';
 import CalendarFilters from '../calendar-filters';
 import CalendarFiltersResult from '../calendar-filters-result';
 import { Box } from '@mui/system';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -47,84 +48,54 @@ const defaultFilters = {
 export default function CalendarView() {
   const theme = useTheme();
 
-  const dummyLeave = [
-    {
-      // _id: '665aedf6e9c824721663307b',
-      // event: 'sdsdsd',
-      // startDate: '2024-06-18T18:30:00.000Z',
-      // endDate: '2024-06-23T18:30:00.000Z',
-      // company_id: '664ec7b3671bf9a7f5366599',
-      // event_user_id: '664ec7b3671bf9a7f536659b',
-      // leave_type: 'festival holiday',
-      // leave_description: 'sdsdsdsdsds',
-      // leave_status: 'office',
-      // created_at: '2024-05-31T06:56:13.842Z',
-      // updated_at: '2024-05-31T06:56:13.842Z',
-      // deleted_at: null,
-      // __v: 0,
-      // firstName: 'Jeel  ',
-      // lastName: 'Kakadiya',
-      // color: 'blue',
-      // textColor: 'blue',
-      id: '0000000000',
-      student: 'darshil thummari',
-      event: 'gothan chholano',
-      startDate: 'Wed Jun 10 2024 17:49:45 GMT+0530 (India Standard Time)',
-      endDate: 'Wed Jun 12 2024 17:49:45 GMT+0530 (India Standard Time)',
-      leave_type: 'festival holiday',
-      leave_description: 'gothan cholavathi eja pohachi che raja aapava namra vinanti',
-      leave_status: 'Pending',
-    },
-    {
-      id: '1111111111',
-      student: 'Sujal magadal',
-      startDate: 'Wed Jun 05 2024 17:49:45 GMT+0530 (India Standard Time)',
-      endDate: 'Wed Jun 06 2024 17:49:45 GMT+0530 (India Standard Time)',
-      event: 'Test Event 2',
-      leave_description: 'Description 2',
-      leave_status: 'Pending',
-      leave_type: 'other',
-    },
-    {
-      id: '2222222222',
-      student: 'heet timli',
-      startDate: 'Wed Jun 07 2024 17:49:45 GMT+0530 (India Standard Time)',
-      endDate: 'Wed Jun 08 2024 17:49:45 GMT+0530 (India Standard Time)',
-      event: 'Test Event 3',
-      leave_description: 'Description 2',
-      leave_status: 'Pending',
-      leave_type: 'Sick leave',
-    },
-  ];
-
-  // Transform the dummyLeave data to use `start` and `end` instead of `startDate` and `endDate`
-
   const settings = useSettingsContext();
 
   const smUp = useResponsive('up', 'sm');
+
+  const {user} = useAuthContext()
 
   const openFilters = useBoolean();
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const { events, eventsLoading } = useGetEvents();
-  const { calendar } = useGetCalendar();
+
+  const { calendar, mutate } = useGetCalendar();
+  const { data } = calendar;
 
   const leaveTypeColors = {
-    'festival holiday': 'blue',
-    'Student Leave': 'yellow',
-    'recaption leave': 'brown',
-    'Sick leave': 'brown',
-    'other': 'red',
+    holiday: '#006099',
+    'student leave': '#6B728E',
+    notice: '#836FFF',
   };
-  const transformedDummyLeave = dummyLeave.map((event) => ({
-    ...event,
-    start: new Date(event.startDate),
-    end: new Date(event.endDate),
-    title: event.event,
-    color: [leaveTypeColors[event.leave_type]] || 'gray',
-    textColor: [leaveTypeColors[event.leave_type]] || 'gray',
-  }));
+
+  const handleLeaveStatusColor = (status) => {
+    if (status === 'approve') {
+      return '#059212';
+    } else {
+      return '#C80036';
+    }
+  };
+
+  const transformedDummyLeave = data?.map((event) => {
+    const color =
+      event.leave_status === 'approve' || event.leave_status === 'reject'
+        ? handleLeaveStatusColor(event.leave_status)
+        : leaveTypeColors[event.event_type] || 'gray';
+    const textColor =
+      event.leave_status === 'approve' || event.leave_status === 'reject'
+        ? handleLeaveStatusColor(event.leave_status)
+        : leaveTypeColors[event.event_type] || 'gray';
+
+    return {
+      ...event,
+      start: new Date(event.from),
+      end: new Date(event.to),
+      title: event.user_id._id === user._id ? event.event : `${event.user_id.firstName} ${event.user_id.lastName} is on ${event.event}`,
+      color,
+      textColor,
+    };
+  });
 
   const dateError = isAfter(filters.startDate, filters.endDate);
 
@@ -148,7 +119,8 @@ export default function CalendarView() {
     selectedRange,
     onClickEventInFilters,
   } = useCalendar();
-  const currentEvent = useEvent(dummyLeave, selectEventId, selectedRange, openForm);
+    
+  const currentEvent = useEvent(data, selectEventId, selectedRange, openForm);
 
   useEffect(() => {
     onInitialView();
@@ -165,17 +137,28 @@ export default function CalendarView() {
     setFilters(defaultFilters);
   }, []);
 
-  const canReset = !!filters.colors.length || (!!filters.startDate && !!filters.endDate);
-
+  const canReset =  (!!filters.startDate && !!filters.endDate);
   const dataFiltered = applyFilter({
-    inputData: events,
+    inputData: transformedDummyLeave,
     filters,
     dateError,
   });
 
   const renderEventContent = (eventInfo) => {
     return (
-      <Box sx={{ height: '14px', fontSize: '12px', fontWeight: '600', alignSelf: 'center' }}>
+      <Box
+        sx={{
+          height: '19px',
+          fontSize: '13px',
+          fontWeight: '500',
+          display: 'flex',
+          alignItems: 'center',
+          textOverflow: 'ellipsis',
+          width: '100%',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+        }}
+      >
         {eventInfo.event.title}
       </Box>
     );
@@ -187,7 +170,7 @@ export default function CalendarView() {
       onFilters={handleFilters}
       canReset={canReset}
       onResetFilters={handleResetFilters}
-      results={dataFiltered.length}
+      results={dataFiltered?.length}
       sx={{ mb: { xs: 3, md: 5 } }}
     />
   );
@@ -240,7 +223,7 @@ export default function CalendarView() {
               initialView={view}
               dayMaxEventRows={3}
               eventDisplay="block"
-              events={transformedDummyLeave}
+              events={dataFiltered}
               eventContent={renderEventContent}
               headerToolbar={false}
               select={onSelectRange}
@@ -281,6 +264,7 @@ export default function CalendarView() {
           currentEvent={currentEvent}
           colorOptions={CALENDAR_COLOR_OPTIONS}
           onClose={onCloseForm}
+          mutate={mutate}
         />
       </Dialog>
 
@@ -292,7 +276,7 @@ export default function CalendarView() {
         canReset={canReset}
         onResetFilters={handleResetFilters}
         dateError={dateError}
-        events={events}
+        events={transformedDummyLeave}
         colorOptions={CALENDAR_COLOR_OPTIONS}
         onClickEvent={onClickEventInFilters}
       />
@@ -304,18 +288,18 @@ export default function CalendarView() {
 
 function applyFilter({ inputData, filters, dateError }) {
   const { colors, startDate, endDate } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index]);
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (colors.length) {
-    inputData = inputData.filter((event) => colors.includes(event.color));
-  }
+  const stabilizedThis = inputData?.map((el, index) => [el, index]);
+  
+  inputData = stabilizedThis?.map((el) => el[0]);
+  
+  // if (colors.length) {
+    //   inputData = inputData.filter((event) => colors.includes(event.color));
+    // }
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((event) => isBetween(event.start, startDate, endDate));
+      inputData = inputData.filter((event) => isBetween(event.from, startDate, endDate));
+      console.log("input ",inputData);
     }
   }
 
