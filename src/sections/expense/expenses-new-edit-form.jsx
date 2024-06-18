@@ -37,7 +37,6 @@ export default function PostNewEditForm({ expensesId }) {
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
   const preview = useBoolean();
-  
 
   const NewBlogSchema = Yup.object().shape({
     type: Yup.string().required('Type is required'),
@@ -55,7 +54,7 @@ export default function PostNewEditForm({ expensesId }) {
       amount: '',
     },
   });
-const {user} = useAuthContext()
+  const { user } = useAuthContext();
   const {
     reset,
     setValue,
@@ -68,7 +67,9 @@ const {user} = useAuthContext()
     const fetchExpenseById = async () => {
       try {
         if (expensesId) {
-          const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/${expensesId}/expense`;
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${
+            user?.company_id
+          }/${expensesId}/expense`;
           const response = await axios.get(URL);
           const { data } = response.data;
           reset({
@@ -88,10 +89,11 @@ const {user} = useAuthContext()
   const onSubmit = handleSubmit(async (data) => {
     try {
       if (data) {
-         const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company//${user?.company_id}/${expensesId}/update-expense`;
-         await axios.put(URL,data).then((res) =>router.push(paths.dashboard.expenses.list)).catch((err)=> console.log(err));
-         
-        
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user?.company_id}/${expensesId}/update-expense`;
+        await axios
+          .put(URL, data)
+          .then((res) => router.push(paths.dashboard.expenses.list))
+          .catch((err) => console.log(err));
       }
       preview.onFalse();
       enqueueSnackbar(expensesId ? 'Update success!' : 'Create success!');

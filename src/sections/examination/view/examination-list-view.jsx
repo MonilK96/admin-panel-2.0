@@ -1,26 +1,27 @@
+import isEqual from 'lodash/isEqual';
 import { useState, useCallback, useEffect } from 'react';
+import axios from 'axios';
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
-import IconButton from '@mui/material/IconButton';
-import TableContainer from '@mui/material/TableContainer';
+import {
+  Tab,
+  Tabs,
+  Card,
+  Table,
+  Button,
+  Tooltip,
+  Container,
+  TableBody,
+  IconButton,
+  TableContainer,
+  alpha,
+} from '@mui/material';
 
 import { paths } from 'src/routes/paths';
+import { useAuthContext } from 'src/auth/hooks';
 import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components'; // Moved here
-
+import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
-
-import { isAfter, isBetween } from 'src/utils/format-time';
-
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
+import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -40,62 +41,99 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import BatchTableRow from '../batch-table-row';
-import BatchTableToolbar from '../batch-table-toolbar';
-import BatchTableFiltersResult from '../batch-table-filters-result';
-import { useGetBatches } from 'src/api/batch';
-import { useAuthContext } from 'src/auth/hooks';
-import axios from 'axios';
+import { useGetExpense } from 'src/api/expense';
+import ExaminationTableRow from '../examination-table-row';
+import ExaminationTableToolbar from '../examination-table-toolbar';
+import ExaminationTableFiltersResult from '../examination-table-filters-result';
+
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No', width: 100 },
-  { id: 'faculty', label: 'Faculty', width: 360 },
-  { id: ' batchName', label: ' Batch Name', width: 390 },
-  { id: 'technology', label: 'Technology' },
-  { id: 'time', label: 'Time', width: 220 },
-  // { id: 'totalAmount', label: 'Price', width: 140 },
-  // { id: 'status', label: 'Status', width: 110 },
+  { id: 'srNo', label: 'Sr No', width: 120 },
+  { id: 'type', label: 'Type' },
+  { id: 'description', label: 'Description', width: 290 },
+  { id: 'amount', label: 'Amount', width: 320 },
+  { id: 'date', label: 'Date date', width: 230 },
   { id: '', width: 88 },
 ];
 
 const defaultFilters = {
   name: '',
+  role: [],
   status: 'all',
-  startDate: null,
-  endDate: null,
 };
 
 // ----------------------------------------------------------------------
 
-export default function BatchListView() {
+export default function ExpenseListView() {
+  const {user} = useAuthContext()
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuthContext();
-  const { batch, mutate } = useGetBatches(`${user?.company_id}`);
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
-
+  const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
-
   const confirm = useBoolean();
-
+  const { expense, mutate } = useGetExpense(user);
   const [tableData, setTableData] = useState([]);
-  useEffect(() => {
-    if (batch) {
-      setTableData(batch);
-    }
-  }, [batch]);
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError = isAfter(filters.startDate, filters.endDate);
+  useEffect(() => {
+    if (expense) {
+      setTableData(expense);
+    }
+  }, [expense]);
+
+  
+  const handleDeleteRow = useCallback(async (id) => {
+    try {
+      
+     const response = await axios.delete(
+        `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/delete/all-expense`,
+        { data: { ids: id } }
+        );
+        if (response.status === 200) {
+          enqueueSnackbar('deleted successfully', { variant: 'success' });
+          
+          confirm.onFalse();
+          mutate();
+        } else {
+        enqueueSnackbar('Failed to delete items', { variant: 'error' });
+      }
+    } catch(error) {
+       console.error('Failed to delete inquiry', error);
+       enqueueSnackbar('Failed to delete expense', { variant: 'error' });
+    }
+    },
+    [enqueueSnackbar,mutate, table, tableData]
+    );
+
+  const handleDeleteRows = useCallback(async () => {
+    try {
+      const selectedIdsArray = [...table.selected];
+      const response = await axios.delete(
+        `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/delete/all-expense`,
+        { data: { ids: selectedIdsArray } }
+      );
+      if (response.status === 200) {
+        enqueueSnackbar('deleted successfully', { variant: 'success' });
+        setTableData((prevData) => prevData.filter((row) => !selectedIdsArray.includes(row.id)));
+        table.onUpdatePageDeleteRow(selectedIdsArray.length);
+        mutate();
+        confirm.onFalse();
+      } else {
+        enqueueSnackbar('Failed to delete items', { variant: 'error' });
+      }
+    } catch (error) {
+      console.error('Failed to delete Expenses', error);
+      enqueueSnackbar('Failed to delete Expenses', { variant: 'error' });
+    }
+  }, [enqueueSnackbar, mutate, table, confirm]);
+
 
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
-    dateError,
   });
 
   const dataInPage = dataFiltered.slice(
@@ -103,10 +141,9 @@ export default function BatchListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   );
 
-  const denseHeight = table.dense ? 56 : 56 + 20;
+  const denseHeight = table.dense ? 56 : 76;
 
-  const canReset =
-    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+  const canReset = !isEqual(defaultFilters, filters);
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -125,59 +162,9 @@ export default function BatchListView() {
     setFilters(defaultFilters);
   }, []);
 
-  const handleDeleteRow = useCallback(
-    async (id) => {
-      try {
-        const response = await axios.delete(`${import.meta.env.VITE_AUTH_API}/api/company/batch`, {
-          data: { ids: id },
-        });
-        if (response.status === 200) {
-          enqueueSnackbar('deleted successfully', { variant: 'success' });
-
-          confirm.onFalse();
-          mutate();
-        } else {
-          enqueueSnackbar('Failed to delete items', { variant: 'error' });
-        }
-      } catch (error) {
-        console.error('Failed to delete batch', error);
-        enqueueSnackbar('Failed to delete batch', { variant: 'error' });
-      }
-    },
-    [dataInPage.length, mutate, enqueueSnackbar, table, tableData]
-  );
-
-  const handleDeleteRows = useCallback(async () => {
-    try {
-      const selectedIdsArray = [...table.selected];
-      const response = await axios.delete(`${import.meta.env.VITE_AUTH_API}/api/company/batch`, {
-        data: { ids: selectedIdsArray },
-      });
-      if (response.status === 200) {
-        enqueueSnackbar('deleted successfully', { variant: 'success' });
-        setTableData((prevData) => prevData.filter((row) => !selectedIdsArray.includes(row.id)));
-        table.onUpdatePageDeleteRow(selectedIdsArray.length);
-        mutate();
-        confirm.onFalse();
-      } else {
-        enqueueSnackbar('Failed to delete items', { variant: 'error' });
-      }
-    } catch (error) {
-      console.error('Failed to delete Batches', error);
-      enqueueSnackbar('Failed to delete Batches', { variant: 'error' });
-    }
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
-
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.batches.edit(id));
-    },
-    [router]
-  );
-
-  const handleViewRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.order.details(id));
+      router.push(paths.dashboard.expenses.edit(id));
     },
     [router]
   );
@@ -189,30 +176,31 @@ export default function BatchListView() {
     [handleFilters]
   );
 
+  const handleViewRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.expenses.edit(id));
+    },
+    [router]
+  );
+
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            {
-              name: 'Batch',
-              href: paths.dashboard.batches.root,
-            },
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Expense', href: paths.dashboard.expenses.root },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.batches.new}
+              href={paths.dashboard.expenses.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Batches
+              New Expense
             </Button>
           }
           sx={{
@@ -221,10 +209,10 @@ export default function BatchListView() {
         />
 
         <Card>
-          <BatchTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
+          <ExaminationTableToolbar filters={filters} onFilters={handleFilters} roleOptions={_roles} />
 
           {canReset && (
-            <BatchTableFiltersResult
+            <ExaminationTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
@@ -277,8 +265,8 @@ export default function BatchListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row, index) => (
-                      <BatchTableRow
-                        key={row.id}
+                      <ExaminationTableRow
+                        key={row._id}
                         row={row}
                         index={index}
                         selected={table.selected.includes(row._id)}
@@ -340,8 +328,8 @@ export default function BatchListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+function applyFilter({ inputData, comparator, filters }) {
+  const { name, status, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -355,21 +343,18 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (name) {
     inputData = inputData.filter(
-      (order) =>
-        order.technology.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.batch_name.toLowerCase().indexOf(name.toLowerCase()) !== -1
-      // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) =>
+        user.type.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.desc.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status === status);
+    inputData = inputData.filter((user) => user.status === status);
   }
 
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
-    }
+  if (role.length) {
+    inputData = inputData.filter((user) => role.includes(user.role));
   }
 
   return inputData;

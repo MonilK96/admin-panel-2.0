@@ -20,6 +20,9 @@ import BatchEditPage from 'src/pages/dashboard/batches/edit';
 import ExpenseListPage from 'src/pages/dashboard/expenses/list';
 import ExpensesCreatePage from 'src/pages/dashboard/expenses/create';
 import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
+import ExaminationListPage from 'src/pages/dashboard/examination/list';
+import ExaminationCreatePage from 'src/pages/dashboard/examination/create';
+import ExaminationEditPage from 'src/pages/dashboard/examination/edit';
 
 // OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
@@ -172,6 +175,15 @@ export const dashboardRoutes = [
           { path: 'list', element: <ExpenseListPage /> },
           { path: 'new', element: <ExpensesCreatePage /> },
           { path: ':id/edit', element: <ExpensesEditPage /> },
+        ],
+      },
+      {
+        path: 'examination',
+        children: [
+          { element: <ExaminationListPage />, index: true },
+          { path: 'list', element: <ExaminationListPage /> },
+          { path: 'new', element: <ExaminationCreatePage /> },
+          { path: ':id/edit', element: <ExaminationEditPage /> },
         ],
       },
       {

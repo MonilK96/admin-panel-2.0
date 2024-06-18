@@ -30,7 +30,7 @@ const types = [
   'Office Expense',
 ];
 
-const ExpenseNewForm = () => {
+const ExaminationNewForm = () => {
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
@@ -186,4 +186,4 @@ const ExpenseNewForm = () => {
   );
 };
 
-export default ExpenseNewForm;
+export default ExaminationNewForm;

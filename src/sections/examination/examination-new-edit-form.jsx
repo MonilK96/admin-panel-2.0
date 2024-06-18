@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import * as Yup from 'yup';
+import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Card from '@mui/material/Card';
@@ -17,8 +18,9 @@ import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 import axios from 'axios';
 import { paths } from 'src/routes/paths';
-import moment from 'moment';
 import { useAuthContext } from 'src/auth/hooks';
+
+// ----------------------------------------------------------------------
 
 const types = [
   'Rent',
@@ -30,7 +32,7 @@ const types = [
   'Office Expense',
 ];
 
-const ExpenseNewForm = () => {
+export default function ExaminationNewEditForm({ expensesId }) {
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
@@ -39,7 +41,7 @@ const ExpenseNewForm = () => {
   const NewBlogSchema = Yup.object().shape({
     type: Yup.string().required('Type is required'),
     desc: Yup.string().required('Description is required'),
-    // date: Yup.date().required('Date is required'),
+    date: Yup.date().required('Date is required'),
     amount: Yup.number().required('Amount is required'),
   });
 
@@ -52,7 +54,7 @@ const ExpenseNewForm = () => {
       amount: '',
     },
   });
-
+  const { user } = useAuthContext();
   const {
     reset,
     setValue,
@@ -60,27 +62,41 @@ const ExpenseNewForm = () => {
     control,
     formState: { isSubmitting },
   } = methods;
-  const { user } = useAuthContext();
-  console.log(user, 'user');
+
+  useEffect(() => {
+    const fetchExpenseById = async () => {
+      try {
+        if (expensesId) {
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${
+            user?.company_id
+          }/${expensesId}/expense`;
+          const response = await axios.get(URL);
+          const { data } = response.data;
+          reset({
+            type: data.type,
+            desc: data.desc,
+            date: data.date ? new Date(data.date) : null,
+            amount: data.amount,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch expense:', error);
+      }
+    };
+    fetchExpenseById();
+  }, [expensesId, reset]);
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const formattedData = {
-        ...data,
-        // date: moment(data.date, 'DD/MM/YYYY').format('DD-MM-YYYY'),
-        company_id: `${user?.company_id}`,
-        created_by: `${user?._id}`,
-      };
-
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/expense`;
-      await axios
-        .post(URL, formattedData)
-        .then((res) => {
-          enqueueSnackbar('Create success!');
-        })
-        .catch((err) => console.log(err));
-
-      router.push(paths.dashboard.expenses.list);
+      if (data) {
+        const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user?.company_id}/${expensesId}/update-expense`;
+        await axios
+          .put(URL, data)
+          .then((res) => router.push(paths.dashboard.expenses.list))
+          .catch((err) => console.log(err));
+      }
       preview.onFalse();
+      enqueueSnackbar(expensesId ? 'Update success!' : 'Create success!');
     } catch (error) {
       console.error(error);
     }
@@ -114,31 +130,6 @@ const ExpenseNewForm = () => {
             />
             <RHFTextField name="desc" label="Description" multiline rows={3} />
             <RHFTextField name="amount" label="Amount" />
-            {/* <Stack spacing={1.5}>
-              <Controller
-                name="date"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <DatePicker
-                    {...field}
-                    value={field.value ? moment(field.value).toDate() : null}
-                    onChange={(newDate) => {
-                      const formattedDate = newDate ? moment(newDate).format('DD/MM/YYYY') : null;
-                      setValue('date', formattedDate);
-                      field.onChange(formattedDate);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        error={!!error}
-                        helperText={error?.message}
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Stack> */}
             <Stack spacing={1.5}>
               <Controller
                 name="date"
@@ -148,7 +139,7 @@ const ExpenseNewForm = () => {
                     {...field}
                     value={field.value}
                     onChange={(newDate) => {
-                      setValue('date', newDate);
+                      setValue('expenseDate', newDate);
                       field.onChange(newDate);
                     }}
                     format="dd/MM/yyyy"
@@ -176,14 +167,14 @@ const ExpenseNewForm = () => {
   );
 
   return (
-    <>
-      <FormProvider methods={methods} onSubmit={onSubmit}>
-        <Grid container spacing={3}>
-          {renderDetails}
-        </Grid>
-      </FormProvider>
-    </>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Grid container spacing={3}>
+        {renderDetails}
+      </Grid>
+    </FormProvider>
   );
-};
+}
 
-export default ExpenseNewForm;
+ExaminationNewEditForm.propTypes = {
+  expensesId: PropTypes.string,
+};
