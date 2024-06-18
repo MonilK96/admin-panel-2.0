@@ -8,12 +8,9 @@ import { fetcher } from '../utils/axios';
 
 export function useGetEmployees() {
   const { user } = useAuthContext();
-
   const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user.company_id}/employee`;
-
+  console.log(URL);
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-
-
   const memoizedValue = useMemo(
     () => ({
       employees: data?.data || [],

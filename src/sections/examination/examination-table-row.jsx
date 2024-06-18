@@ -13,7 +13,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import ExpenseQuickEditForm from './expenses-quick-edit-form';
+import ExpenseQuickEditForm from './examination-quick-edit-form';
 
 // ----------------------------------------------------------------------
 

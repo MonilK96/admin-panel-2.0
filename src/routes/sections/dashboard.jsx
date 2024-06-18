@@ -15,6 +15,7 @@ import UserProfile from 'src/pages/dashboard/profile/profile';
 import BatchListPage from 'src/pages/dashboard/batches/list';
 import BatchCreatePage from 'src/pages/dashboard/batches/create';
 import BatchEditPage from 'src/pages/dashboard/batches/edit';
+import StudentCardsPage from 'src/pages/dashboard/student/cards';
 
 // EXPENSE
 import ExpenseListPage from 'src/pages/dashboard/expenses/list';
@@ -23,6 +24,7 @@ import ExpensesEditPage from 'src/pages/dashboard/expenses/edit';
 import ExaminationListPage from 'src/pages/dashboard/examination/list';
 import ExaminationCreatePage from 'src/pages/dashboard/examination/create';
 import ExaminationEditPage from 'src/pages/dashboard/examination/edit';
+import { SettingsPage } from 'src/sections/settings/view';
 
 // OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
@@ -65,7 +67,6 @@ const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
 // STUDENT
 const StudentProfilePage = lazy(() => import('src/pages/dashboard/student/profile'));
 const StudentListPage = lazy(() => import('src/pages/dashboard/student/list'));
-const StudentAccountPage = lazy(() => import('src/pages/dashboard/student/account'));
 const StudentCreatePage = lazy(() => import('src/pages/dashboard/student/new'));
 const StudentEditPage = lazy(() => import('src/pages/dashboard/student/edit'));
 const GuardianDetailsPage = lazy(() => import('src/pages/dashboard/student/guardian'));
@@ -120,11 +121,11 @@ export const dashboardRoutes = [
         children: [
           { element: <StudentProfilePage />, index: true },
           { path: 'profile', element: <StudentProfilePage /> },
+          { path: 'cards', element: <StudentCardsPage /> },
           { path: 'list', element: <StudentListPage /> },
           { path: 'new', element: <StudentCreatePage /> },
           { path: ':id/edit', element: <StudentEditPage /> },
           { path: ':id/guaridiandetails', element: <GuardianDetailsPage /> },
-          { path: 'account', element: <StudentAccountPage /> },
         ],
       },
       {
@@ -223,6 +224,7 @@ export const dashboardRoutes = [
       { path: 'calendar', element: <CalendarPage /> },
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'permission', element: <PermissionDeniedPage /> },
+      { path: 'setting', element: <SettingsPage /> },
     ],
   },
 ];
