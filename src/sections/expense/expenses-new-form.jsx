@@ -39,7 +39,7 @@ const ExpenseNewForm = () => {
   const NewBlogSchema = Yup.object().shape({
     type: Yup.string().required('Type is required'),
     desc: Yup.string().required('Description is required'),
-    date: Yup.date().required('Date is required'),
+    // date: Yup.date().required('Date is required'),
     amount: Yup.number().required('Amount is required'),
   });
 
@@ -48,7 +48,7 @@ const ExpenseNewForm = () => {
     defaultValues: {
       type: '',
       desc: '',
-      date: moment().format('DD/MM/YYYY'),
+      date: null,
       amount: '',
     },
   });
@@ -61,16 +61,17 @@ const ExpenseNewForm = () => {
     formState: { isSubmitting },
   } = methods;
   const { user } = useAuthContext();
+  console.log(user, 'user');
   const onSubmit = handleSubmit(async (data) => {
     try {
       const formattedData = {
         ...data,
-        date: moment(data.date, 'DD/MM/YYYY').format('DD-MM-YYYY'),
+        // date: moment(data.date, 'DD/MM/YYYY').format('DD-MM-YYYY'),
         company_id: `${user?.company_id}`,
-        created_by: `${user?.firstName} ${user?.lastName}`,
+        created_by: `${user?._id}`,
       };
 
-      const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/expense`;
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/expense`;
       await axios
         .post(URL, formattedData)
         .then((res) => {
@@ -113,7 +114,7 @@ const ExpenseNewForm = () => {
             />
             <RHFTextField name="desc" label="Description" multiline rows={3} />
             <RHFTextField name="amount" label="Amount" />
-            <Stack spacing={1.5}>
+            {/* <Stack spacing={1.5}>
               <Controller
                 name="date"
                 control={control}
@@ -126,6 +127,31 @@ const ExpenseNewForm = () => {
                       setValue('date', formattedDate);
                       field.onChange(formattedDate);
                     }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        error={!!error}
+                        helperText={error?.message}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </Stack> */}
+            <Stack spacing={1.5}>
+              <Controller
+                name="date"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <DatePicker
+                    {...field}
+                    value={field.value}
+                    onChange={(newDate) => {
+                      setValue('date', newDate);
+                      field.onChange(newDate);
+                    }}
+                    format="dd/MM/yyyy"
                     renderInput={(params) => (
                       <TextField
                         {...params}

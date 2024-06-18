@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { fetcher } from '../utils/axios';
 
 export function useGetBatches(user) {
-  const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user}/batch`;
+  const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user}/batch`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(

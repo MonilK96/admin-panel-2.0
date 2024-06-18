@@ -50,7 +50,7 @@
 //   });
 
 //   students.map((data) => {
-//     const name = `${data.personal_info.firstName} ${data.personal_info.lastName}`;
+//     const name = `${data.firstName} ${data.lastName}`;
 //     studentName.push({ name: name, _id: data._id });
 //   });
 //   const handleStudentId = (event, newValue) => {
@@ -76,7 +76,7 @@
 //           enqueueSnackbar('Create success!');
 //         })
 //         .catch((err) => console.log(err));
-        
+
 //         router.push(paths.dashboard.batches.root);
 //         preview.onFalse();
 //     } catch (error) {
@@ -122,10 +122,10 @@
 //                 />
 //               )}
 //             />
-         
+
 //             <RHFAutocomplete1 control={methods.control} studentName={studentName} />
 //           </Stack>
-        
+
 //         </Card>
 //         <Stack sx={{ my: '30px', alignItems: 'flex-end' }}>
 //           <Button type="submit" variant="contained">
@@ -149,7 +149,6 @@
 
 // export default BatchNewForm;
 
-
 import React, { useState, useEffect } from 'react';
 import * as Yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
@@ -160,36 +159,38 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import axios from 'axios';
 import { paths } from 'src/routes/paths';
-import { useGetStudents } from 'src/api/student';
+import { useGetStudents, useGetStudentsList } from 'src/api/student';
 import { useAuthContext } from 'src/auth/hooks';
 import RHFAutocomplete1 from 'src/components/hook-form/batch-autocomplete';
+import { useGetFaculty } from 'src/api/employee';
 
 const BatchNewForm = () => {
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
-  const preview = useBoolean();
-  const { students } = useGetStudents();
-  const [studentName, setStudentName] = useState([]);
   const { user } = useAuthContext();
-
+  const { faculty } = useGetFaculty();
+  const preview = useBoolean();
+  const { students } = useGetStudentsList(user?.company_id);
+  const [studentName, setStudentName] = useState([]);
+  const [facultyName, setFacultyName] = useState([]);
   useEffect(() => {
     if (students) {
-      const formattedStudents = students.map((data) => ({
-        name: `${data.personal_info.firstName} ${data.personal_info.lastName}`,
-        _id: data._id,
-      }));
-      setStudentName(formattedStudents);
+      setStudentName(students);
     }
-  }, [students]);
+    if (faculty) {
+      setFacultyName(faculty);
+    }
+  }, [students, faculty]);
 
   const NewBlogSchema = Yup.object().shape({
     technology: Yup.string().required('Technology is required'),
     batch_time: Yup.string().required('Time is required'),
     batch_name: Yup.string().required('Batch Name is required'),
+    // faculty: Yup.string().required('Faculty Name is required'),
     batch_members: Yup.array().required('Batch Member is required'),
   });
 
@@ -197,6 +198,7 @@ const BatchNewForm = () => {
     resolver: yupResolver(NewBlogSchema),
     defaultValues: {
       technology: '',
+      faculty: null,
       batch_time: null,
       batch_name: '',
       batch_members: [],
@@ -212,10 +214,15 @@ const BatchNewForm = () => {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    const batchMemberIds = data.batch_members.map((member) => member._id);
+
     try {
-     
-      const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/batch`;
-      await axios.post(URL, data);
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/${user?.company_id}/batch`;
+      await axios.post(URL, {
+        ...data,
+        batch_members: batchMemberIds,
+        faculty: data?.faculty?._id,
+      });
       enqueueSnackbar('Create success!');
       router.push(paths.dashboard.batches.root);
       preview.onFalse();
@@ -223,7 +230,17 @@ const BatchNewForm = () => {
       console.log('Error:', error);
     }
   });
-
+  const technology = [
+    'Full-Stack',
+    'Flutter',
+    'Game',
+    'Ui/Ux',
+    'C++ programing',
+    'C programing',
+    'CCC language',
+    'HTML',
+    'CSS',
+  ];
   const renderDetails = (
     <>
       {mdUp && (
@@ -241,7 +258,16 @@ const BatchNewForm = () => {
         <Card>
           {!mdUp && <CardHeader title="Details" />}
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="technology" label="Technology" />
+            <RHFAutocomplete
+              name="technology"
+              type="technology"
+              label="Technology"
+              placeholder="Choose a technology"
+              fullWidth
+              options={technology.map((option) => option)}
+              getOptionLabel={(option) => option}
+            />
+            {/* <RHFTextField name="technology" label="Technology" /> */}
             <RHFTextField name="batch_name" label="Batch Name" />
             <Controller
               name="batch_time"
@@ -261,6 +287,15 @@ const BatchNewForm = () => {
                 />
               )}
             />
+            <RHFAutocomplete
+              name="faculty"
+              type="faculty"
+              label="Facult Name"
+              placeholder="Choose a faculty"
+              fullWidth
+              options={facultyName.map((option) => option)}
+              getOptionLabel={(option) => `${option?.firstName} ${option?.lastName}`}
+            />
             <RHFAutocomplete1 control={control} studentName={studentName} />
           </Stack>
         </Card>
@@ -275,9 +310,7 @@ const BatchNewForm = () => {
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3}>
-        {renderDetails}
-      </Grid>
+      <Grid container>{renderDetails}</Grid>
     </FormProvider>
   );
 };

@@ -11,14 +11,14 @@ const RHFAutocomplete1 = ({ control, studentName }) => (
         {...field}
         multiple
         options={studentName}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option?.firstName}
         value={field.value || []}
         isOptionEqualToValue={(option, value) => option._id === value._id}
         onChange={(event, newValue) => field.onChange(newValue)}
         renderOption={(props, option, { selected }) => (
           <li {...props}>
             <Checkbox style={{ marginRight: 8 }} checked={selected} />
-            {option.name}
+            {`${option?.firstName} ${option?.lastName}`}
           </li>
         )}
         renderTags={(selected, getTagProps) =>
@@ -26,7 +26,7 @@ const RHFAutocomplete1 = ({ control, studentName }) => (
             <Chip
               {...getTagProps({ index })}
               key={option?._id}
-              label={option?.name}
+              label={`${option?.firstName} ${option?.lastName}`}
               size="small"
               color="info"
               variant="soft"

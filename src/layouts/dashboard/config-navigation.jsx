@@ -4,19 +4,15 @@ import { paths } from 'src/routes/paths';
 
 import { useTranslate } from 'src/locales';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
+// import Label from 'src/components/label';
+// import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
-  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
-  // OR
-  // <Iconify icon="fluent:mail-24-filled" />
-  // https://icon-sets.iconify.design/solar/
-  // https://www.streamlinehq.com/icons
-);
+  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />);
 
 const ICONS = {
   job: icon('ic_job'),
@@ -44,6 +40,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  batches: <Iconify icon="solar:users-group-rounded-bold-duotone" sx={{ width: 1, height: 1 }} />,
 };
 
 // ----------------------------------------------------------------------
@@ -97,11 +94,8 @@ export function useNavData() {
             path: paths.dashboard.student.root,
             icon: ICONS.user,
             children: [
-              { title: t('profile'), path: paths.dashboard.student.root },
               { title: t('list'), path: paths.dashboard.student.list },
-              { title: t('create'), path: paths.dashboard.student.new },
-              { title: t('edit'), path: paths.dashboard.student.demo.edit },
-              { title: t('account'), path: paths.dashboard.student.account },
+              { title: t('card'), path: paths.dashboard.student.cards },
             ],
           },
 
@@ -181,18 +175,24 @@ export function useNavData() {
             title: t('expenses'),
             path: paths.dashboard.expenses.list,
             icon: ICONS.analytics,
-            children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
+          },
+          {
+            title: t('examination'),
+            path: paths.dashboard.examination.list,
+            icon: ICONS.analytics,
+            // children: [{ title: t('list'), path: paths.dashboard.expenses.list }],
           },
 
           // BATCH
           {
             title: t('batches'),
             path: paths.dashboard.batches.root,
-            icon: ICONS.order,
-            children: [
-              { title: t('list'), path: paths.dashboard.batches.root },
-              { title: t('details'), path: paths.dashboard.batches.demo.details },
-            ],
+            icon: ICONS.batches,
+            // children: [
+            // { title: t('list'), path: paths.dashboard.batches.root },
+            // { title: t('details'), path: paths.dashboard.batches.demo.details },
+            // ],
           },
 
           // INVOICE

@@ -51,10 +51,11 @@ import axios from 'axios';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No', width: 160 },
-  { id: 'technology', label: 'Technology' },
+  { id: 'srNo', label: 'Sr No', width: 100 },
+  { id: 'faculty', label: 'Faculty', width: 360 },
   { id: ' batchName', label: ' Batch Name', width: 390 },
-  { id: 'time', label: 'Time', width: 220},
+  { id: 'technology', label: 'Technology' },
+  { id: 'time', label: 'Time', width: 220 },
   // { id: 'totalAmount', label: 'Price', width: 140 },
   // { id: 'status', label: 'Status', width: 110 },
   { id: '', width: 88 },
@@ -87,28 +88,28 @@ export default function BatchListView() {
     }
   }, [batch]);
   const [filters, setFilters] = useState(defaultFilters);
-  
+
   const dateError = isAfter(filters.startDate, filters.endDate);
-  
+
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
   });
-  
+
   const dataInPage = dataFiltered.slice(
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage
-    );
-    
-    const denseHeight = table.dense ? 56 : 56 + 20;
-    
+  );
+
+  const denseHeight = table.dense ? 56 : 56 + 20;
+
   const canReset =
-  !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
-  
+    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
-  
+
   const handleFilters = useCallback(
     (name, value) => {
       table.onResetPage();
@@ -118,19 +119,18 @@ export default function BatchListView() {
       }));
     },
     [table]
-    );
-    
-    const handleResetFilters = useCallback(() => {
-      setFilters(defaultFilters);
+  );
+
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
   }, []);
-  
+
   const handleDeleteRow = useCallback(
     async (id) => {
       try {
-        const response = await axios.delete(
-          'https://admin-panel-dmawv.ondigitalocean.app/api/company/batch',
-          { data: { ids: id } }
-        );
+        const response = await axios.delete(`${import.meta.env.VITE_AUTH_API}/api/company/batch`, {
+          data: { ids: id },
+        });
         if (response.status === 200) {
           enqueueSnackbar('deleted successfully', { variant: 'success' });
 
@@ -146,15 +146,13 @@ export default function BatchListView() {
     },
     [dataInPage.length, mutate, enqueueSnackbar, table, tableData]
   );
-  
-  
+
   const handleDeleteRows = useCallback(async () => {
     try {
       const selectedIdsArray = [...table.selected];
-      const response = await axios.delete(
-        `https://admin-panel-dmawv.ondigitalocean.app/api/company/batch`,
-        { data: { ids: selectedIdsArray } }
-      );
+      const response = await axios.delete(`${import.meta.env.VITE_AUTH_API}/api/company/batch`, {
+        data: { ids: selectedIdsArray },
+      });
       if (response.status === 200) {
         enqueueSnackbar('deleted successfully', { variant: 'success' });
         setTableData((prevData) => prevData.filter((row) => !selectedIdsArray.includes(row.id)));
@@ -168,182 +166,176 @@ export default function BatchListView() {
       console.error('Failed to delete Batches', error);
       enqueueSnackbar('Failed to delete Batches', { variant: 'error' });
     }
-    }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
 
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.batches.edit(id));
+    },
+    [router]
+  );
 
-      const handleEditRow = useCallback(
-        (id) => {
-          router.push(paths.dashboard.batches.edit(id));
-        },
-        [router]
-      );
-    
-    const handleViewRow = useCallback(
-      (id) => {
-        router.push(paths.dashboard.order.details(id));
-      },
-      [router]
-      );
-      
-      const handleFilterStatus = useCallback(
-        (event, newValue) => {
-          handleFilters('status', newValue);
-        },
-        [handleFilters]
-        );
-        
-        return (
-          <>
-            <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-              <CustomBreadcrumbs
-                heading="List"
-                links={[
-                  {
-                    name: 'Dashboard',
-                    href: paths.dashboard.root,
-                  },
-                  {
-                    name: 'Batch',
-                    href: paths.dashboard.batches.root,
-                  },
-                  { name: 'List' },
-                ]}
-                action={
-                  <Button
-                    component={RouterLink}
-                    href={paths.dashboard.batches.new}
-                    variant="contained"
-                    startIcon={<Iconify icon="mingcute:add-line" />}
-                  >
-                    New Batches
-                  </Button>
-                }
-                sx={{
-                  mb: { xs: 3, md: 5 },
-                }}
-              />
+  const handleViewRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.order.details(id));
+    },
+    [router]
+  );
 
-              <Card>
+  const handleFilterStatus = useCallback(
+    (event, newValue) => {
+      handleFilters('status', newValue);
+    },
+    [handleFilters]
+  );
 
-                <BatchTableToolbar
-                  filters={filters}
-                  onFilters={handleFilters}
-                  dateError={dateError}
-                />
+  return (
+    <>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+        <CustomBreadcrumbs
+          heading="List"
+          links={[
+            {
+              name: 'Dashboard',
+              href: paths.dashboard.root,
+            },
+            {
+              name: 'Batch',
+              href: paths.dashboard.batches.root,
+            },
+            { name: 'List' },
+          ]}
+          action={
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.batches.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              New Batches
+            </Button>
+          }
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
 
-                {canReset && (
-                  <BatchTableFiltersResult
-                    filters={filters}
-                    onFilters={handleFilters}
-                    onResetFilters={handleResetFilters}
-                    results={dataFiltered.length}
-                    sx={{ p: 2.5, pt: 0 }}
-                  />
-                )}
+        <Card>
+          <BatchTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
 
-                <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-                  <TableSelectedAction
-                    dense={table.dense}
-                    numSelected={table.selected.length}
-                    rowCount={dataFiltered.length}
-                    onSelectAllRows={(checked) =>
-                      table.onSelectAllRows(
-                        checked,
-                        dataFiltered.map((row) => row._id)
-                      )
-                    }
-                    action={
-                      <Tooltip title="Delete">
-                        <IconButton color="primary" onClick={confirm.onTrue}>
-                          <Iconify icon="solar:trash-bin-trash-bold" />
-                        </IconButton>
-                      </Tooltip>
-                    }
-                  />
+          {canReset && (
+            <BatchTableFiltersResult
+              filters={filters}
+              onFilters={handleFilters}
+              onResetFilters={handleResetFilters}
+              results={dataFiltered.length}
+              sx={{ p: 2.5, pt: 0 }}
+            />
+          )}
 
-                  <Scrollbar>
-                    <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                      <TableHeadCustom
-                        order={table.order}
-                        orderBy={table.orderBy}
-                        headLabel={TABLE_HEAD}
-                        rowCount={dataFiltered.length}
-                        numSelected={table.selected.length}
-                        onSort={table.onSort}
-                        onSelectAllRows={(checked) =>
-                          table.onSelectAllRows(
-                            checked,
-                            dataFiltered.map((row) => row._id)
-                          )
-                        }
-                      />
-
-                      <TableBody>
-                        {dataFiltered
-                          .slice(
-                            table.page * table.rowsPerPage,
-                            table.page * table.rowsPerPage + table.rowsPerPage
-                          )
-                          .map((row, index) => (
-                            <BatchTableRow
-                              key={row.id}
-                              row={row}
-                              index={index}
-                              selected={table.selected.includes(row._id)}
-                              onSelectRow={() => table.onSelectRow(row._id)}
-                              onDeleteRow={() => handleDeleteRow(row._id)}
-                              onEditRow={() => handleEditRow(row._id)}
-                              onViewRow={() => handleViewRow(row._id)}
-                            />
-                          ))}
-
-                        <TableEmptyRows
-                          height={denseHeight}
-                          emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                        />
-
-                        <TableNoData notFound={notFound} />
-                      </TableBody>
-                    </Table>
-                  </Scrollbar>
-                </TableContainer>
-
-                <TablePaginationCustom
-                  count={dataFiltered.length}
-                  page={table.page}
-                  rowsPerPage={table.rowsPerPage}
-                  onPageChange={table.onChangePage}
-                  onRowsPerPageChange={table.onChangeRowsPerPage}
-                  dense={table.dense}
-                  onChangeDense={table.onChangeDense}
-                />
-              </Card>
-            </Container>
-
-            <ConfirmDialog
-              open={confirm.value}
-              onClose={confirm.onFalse}
-              title="Delete"
-              content={
-                <>
-                  Are you sure want to delete <strong> {table.selected.length} </strong> items?
-                </>
+          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+            <TableSelectedAction
+              dense={table.dense}
+              numSelected={table.selected.length}
+              rowCount={dataFiltered.length}
+              onSelectAllRows={(checked) =>
+                table.onSelectAllRows(
+                  checked,
+                  dataFiltered.map((row) => row._id)
+                )
               }
               action={
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => {
-                    handleDeleteRows();
-                    confirm.onFalse();
-                  }}
-                >
-                  Delete
-                </Button>
+                <Tooltip title="Delete">
+                  <IconButton color="primary" onClick={confirm.onTrue}>
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                  </IconButton>
+                </Tooltip>
               }
             />
+
+            <Scrollbar>
+              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                <TableHeadCustom
+                  order={table.order}
+                  orderBy={table.orderBy}
+                  headLabel={TABLE_HEAD}
+                  rowCount={dataFiltered.length}
+                  numSelected={table.selected.length}
+                  onSort={table.onSort}
+                  onSelectAllRows={(checked) =>
+                    table.onSelectAllRows(
+                      checked,
+                      dataFiltered.map((row) => row._id)
+                    )
+                  }
+                />
+
+                <TableBody>
+                  {dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row, index) => (
+                      <BatchTableRow
+                        key={row.id}
+                        row={row}
+                        index={index}
+                        selected={table.selected.includes(row._id)}
+                        onSelectRow={() => table.onSelectRow(row._id)}
+                        onDeleteRow={() => handleDeleteRow(row._id)}
+                        onEditRow={() => handleEditRow(row._id)}
+                        onViewRow={() => handleViewRow(row._id)}
+                      />
+                    ))}
+
+                  <TableEmptyRows
+                    height={denseHeight}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                  />
+
+                  <TableNoData notFound={notFound} />
+                </TableBody>
+              </Table>
+            </Scrollbar>
+          </TableContainer>
+
+          <TablePaginationCustom
+            count={dataFiltered.length}
+            page={table.page}
+            rowsPerPage={table.rowsPerPage}
+            onPageChange={table.onChangePage}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
+            dense={table.dense}
+            onChangeDense={table.onChangeDense}
+          />
+        </Card>
+      </Container>
+
+      <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title="Delete"
+        content={
+          <>
+            Are you sure want to delete <strong> {table.selected.length} </strong> items?
           </>
-        );
+        }
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              handleDeleteRows();
+              confirm.onFalse();
+            }}
+          >
+            Delete
+          </Button>
+        }
+      />
+    </>
+  );
 }
 
 // ----------------------------------------------------------------------
@@ -365,10 +357,10 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     inputData = inputData.filter(
       (order) =>
         order.technology.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.batch_name.toLowerCase().indexOf(name.toLowerCase()) !== -1 
-        // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
-        );
-      }
+        order.batch_name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      // order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+    );
+  }
 
   if (status !== 'all') {
     inputData = inputData.filter((order) => order.status === status);

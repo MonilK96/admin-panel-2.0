@@ -48,7 +48,6 @@ import ExpenseTableFiltersResult from '../expenses-table-filters-result';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'srNo', label: 'Sr No', width: 120 },

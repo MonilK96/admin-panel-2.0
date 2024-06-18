@@ -201,31 +201,33 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import axios from 'axios';
 import { paths } from 'src/routes/paths';
-import { useGetStudents } from 'src/api/student';
-import { useAuthContext } from 'src/auth/hooks';
 import RHFAutocomplete1 from 'src/components/hook-form/batch-autocomplete';
 import moment from 'moment';
+import { useGetFaculty } from 'src/api/employee';
+import { useGetStudentsList } from 'src/api/student';
+import { useAuthContext } from 'src/auth/hooks';
 
 export default function BatchNewEditForm({ batchId }) {
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
   const { enqueueSnackbar } = useSnackbar();
   const preview = useBoolean();
-  const { students } = useGetStudents();
-  const [studentName, setStudentName] = useState([]);
   const { user } = useAuthContext();
+  const { students } = useGetStudentsList(user?.company_id);
+  const { faculty } = useGetFaculty();
+  const [studentName, setStudentName] = useState([]);
+  const [facultyName, setFacultyName] = useState([]);
   useEffect(() => {
     if (students) {
-      const formattedStudents = students.map((data) => ({
-        name: `${data.personal_info.firstName} ${data.personal_info.lastName}`,
-        _id: data._id,
-      }));
-      setStudentName(formattedStudents);
+      setStudentName(students);
     }
-  }, [students]);
+    if (faculty) {
+      setFacultyName(faculty);
+    }
+  }, [students, faculty]);
 
   const NewBlogSchema = Yup.object().shape({
     technology: Yup.string().required('Technology is required'),
@@ -238,6 +240,7 @@ export default function BatchNewEditForm({ batchId }) {
     resolver: yupResolver(NewBlogSchema),
     defaultValues: {
       technology: '',
+      faculty:null ,
       batch_time: null,
       batch_name: '',
       batch_members: [],
@@ -256,14 +259,16 @@ export default function BatchNewEditForm({ batchId }) {
     const fetchBatchesById = async () => {
       try {
         if (batchId) {
-          const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/batch/${batchId}`;
+          const URL = `${import.meta.env.VITE_AUTH_API}/api/company/batch/${batchId}`;
           const response = await axios.get(URL);
           const { data } = response.data;
           reset({
             technology: data?.batch?.technology,
             batch_name: data?.batch?.batch_name,
             batch_time: moment(data?.batch?.batch_time, 'hh:mm').toDate(),
+            faculty: data?.batch?.faculty,
             batch_members: data?.batch?.batch_members,
+            // batch_members: [{name:"ramesh"},{name:"heet"}],
           });
         }
       } catch (error) {
@@ -278,9 +283,9 @@ export default function BatchNewEditForm({ batchId }) {
       const formattedData = {
         ...data,
         batch_members: data.batch_members.map((member) => member._id),
+        faculty: data?.faculty?._id,
       };
-      console.log(formattedData,"sdsd");
-      const URL = `https://admin-panel-dmawv.ondigitalocean.app/api/company/${user?.company_id}/batch/${batchId}`;
+      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/batch/${batchId}`;
       await axios.put(URL, formattedData).then((res) => enqueueSnackbar('Update success!')).catch((err) => console.log(err));
       
       router.push(paths.dashboard.batches.root);
@@ -289,6 +294,17 @@ export default function BatchNewEditForm({ batchId }) {
       console.log('Error:', error);
     }
   });
+    const technology = [
+      'Full-Stack',
+      'Flutter',
+      'Game',
+      'Ui/Ux',
+      'C++ programing',
+      'C programing',
+      'CCC language',
+      'HTML',
+      'CSS',
+    ];
 
   const renderDetails = (
     <>
@@ -307,7 +323,16 @@ export default function BatchNewEditForm({ batchId }) {
         <Card>
           {!mdUp && <CardHeader title="Details" />}
           <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="technology" label="Technology" />
+            {/* <RHFTextField name="technology" label="Technology" /> */}
+            <RHFAutocomplete
+              name="technology"
+              type="technology"
+              label="Technology"
+              placeholder="Choose a technology"
+              fullWidth
+              options={technology.map((option) => option)}
+              getOptionLabel={(option) => option}
+            />
             <RHFTextField name="batch_name" label="Batch Name" />
             <Controller
               name="batch_time"
@@ -326,6 +351,15 @@ export default function BatchNewEditForm({ batchId }) {
                   }}
                 />
               )}
+            />
+            <RHFAutocomplete
+              name="faculty"
+              type="faculty"
+              label="Facult Name"
+              placeholder="Choose a faculty"
+              fullWidth
+              options={facultyName.map((option) => option)}
+              getOptionLabel={(option) => `${option?.firstName} ${option?.lastName}`}
             />
             <RHFAutocomplete1 control={control} studentName={studentName} />
           </Stack>
